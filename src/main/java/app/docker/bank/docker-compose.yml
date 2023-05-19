@@ -1,0 +1,8 @@
+version: '3.7'
+services:
+   app-bank:
+      image: brcz1n/bank-app-tec502
+      container_name: bank-app-brcz1n
+      ports:
+        - "8000:8000"
+   
