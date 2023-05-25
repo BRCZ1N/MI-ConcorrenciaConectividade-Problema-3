@@ -6,7 +6,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
+import application.car.CarApp;
 import application.exceptions.UnableToConnectException;
+import utilityclasses.ConfigLarsidIpsHttp;
 import utilityclasses.Http;
 import utilityclasses.RequestHttp;
 import utilityclasses.ResponseHttp;
@@ -17,6 +19,8 @@ public class ClientApp {
 	private boolean pick = true;
 	private Scanner scanner = new Scanner(System.in);
 	private String banco;
+	private String escolha;
+	private volatile String bankIp;
 	private void execBank() throws IOException, UnableToConnectException {
 		pickBank();
 		loginClient();
@@ -37,20 +41,15 @@ public class ClientApp {
 			banco = scanner.next();
 			if (banco.equals("1") || banco.equals("2") || banco.equals("3") || banco.equals("4")) {
 				while(pick){
-					System.out.println("Banco selecionado: " + banco);
-		            System.out.println("========= Pagina Inicial ==========" );
-		            System.out.println("===================================================");
-		            System.out.println("====== (1) - Tela de Login");
-					System.out.println("====== (2) - Alterar banco");
-					System.out.println("===================================================");
-					String escolha = scanner.next();
+					escolha = changeGo(banco);
 					if(escolha.equals("1")) {
 						 pick = false;
 					
 					}else if(escolha.equals("2")) {
-						break;
+						System.out.println("Escolha outro banco");
 					}else {
 						System.out.println("Digite uma opção correta");
+						escolha = changeGo(banco);
 					}
 		           
 				}
@@ -62,10 +61,35 @@ public class ClientApp {
 		
 	}
 
+	private String changeGo(String banco) {
+		if(banco.equals("1")) {
+			banco = "Banco 1";
+			bankIp = ConfigLarsidIpsHttp.HTTP_FOG_REGION_Q1.getAddress();
+		}else if(banco.equals("2")) {
+			banco = "Banco 2";
+			bankIp = ConfigLarsidIpsHttp.HTTP_FOG_REGION_Q2.getAddress();
+		}else if(banco.equals("3")) {
+			banco = "Banco 3";
+			bankIp = ConfigLarsidIpsHttp.HTTP_FOG_REGION_Q3.getAddress();
+		}else if(banco.equals("4")) {
+			banco = "Banco 4";
+			bankIp = ConfigLarsidIpsHttp.HTTP_FOG_REGION_Q4.getAddress();
+		}
+		System.out.println("Banco selecionado: " + banco);
+        System.out.println("========= Pagina Inicial ==========" );
+        System.out.println("===================================================");
+        System.out.println("====== (1) - Tela de Login");
+		System.out.println("====== (2) - Alterar banco");
+		System.out.println("===================================================");
+		String escolha = scanner.next();
+		return escolha;
+		
+	}
+
 	private void loginClient() throws IOException {
 		while (log) {
 			System.out.println("===================================================");
-			System.out.println("========= Central bancaria"+ banco +" ==========");
+			System.out.println("========= Central bancaria:"+ banco +" ==========");
 			System.out.println("===================================================");
 			System.out.println("====== Digite seu cpf: ======");
 			String cpf = scanner.next();
@@ -77,7 +101,7 @@ public class ClientApp {
 			json.put("cpf", cpf);
 			json.put("senha", senha);
 			ResponseHttp response;
-			response = messageReturn("GET", "/station/shorterQueue", "HTTP/1.1", header, senha);
+			response = messageReturn("GET", "/station/shorterQueue", "HTTP/1.1", header, json);
 		}
 	}
 
@@ -95,11 +119,17 @@ public class ClientApp {
 	}
 
 	public ResponseHttp messageReturn(String method, String endpoint, String httpVersion, Map<String, String> header,
-			String ip) throws IOException {
+			JSONObject json) throws IOException {
 
 		ResponseHttp response = Http.sendHTTPRequestAndGetHttpResponse(
-				new RequestHttp(method, endpoint, httpVersion, header),ip);
+				new RequestHttp(method, endpoint, httpVersion, header),json);
 		return response;
+
+	}
+	public static void main(String[] args) throws IOException, UnableToConnectException {
+
+		ClientApp appBank = new ClientApp();
+		appBank.execBank();
 
 	}
 }
