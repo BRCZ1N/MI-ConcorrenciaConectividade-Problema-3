@@ -43,8 +43,21 @@ public class ClientApp {
 				while(pick){
 					escolha = changeGo(banco);
 					if(escolha.equals("1")) {
+						 
+						 if(banco.equals("1")) {
+								
+								bankIp = ConfigLarsidIpsHttp.HTTP_FOG_REGION_Q1.getAddress();
+							}else if(banco.equals("2")) {
+								
+								bankIp = ConfigLarsidIpsHttp.HTTP_FOG_REGION_Q2.getAddress();
+							}else if(banco.equals("3")) {
+								
+								bankIp = ConfigLarsidIpsHttp.HTTP_FOG_REGION_Q3.getAddress();
+							}else if(banco.equals("4")) {
+								
+								bankIp = ConfigLarsidIpsHttp.HTTP_FOG_REGION_Q4.getAddress();
+							}
 						 pick = false;
-					
 					}else if(escolha.equals("2")) {
 						System.out.println("Escolha outro banco");
 					}else {
@@ -62,20 +75,8 @@ public class ClientApp {
 	}
 
 	private String changeGo(String banco) {
-		if(banco.equals("1")) {
-			banco = "Banco 1";
-			bankIp = ConfigLarsidIpsHttp.HTTP_FOG_REGION_Q1.getAddress();
-		}else if(banco.equals("2")) {
-			banco = "Banco 2";
-			bankIp = ConfigLarsidIpsHttp.HTTP_FOG_REGION_Q2.getAddress();
-		}else if(banco.equals("3")) {
-			banco = "Banco 3";
-			bankIp = ConfigLarsidIpsHttp.HTTP_FOG_REGION_Q3.getAddress();
-		}else if(banco.equals("4")) {
-			banco = "Banco 4";
-			bankIp = ConfigLarsidIpsHttp.HTTP_FOG_REGION_Q4.getAddress();
-		}
-		System.out.println("Banco selecionado: " + banco);
+		
+		System.out.println("Banco selecionado: " + "BANCO"+""+banco);
         System.out.println("========= Pagina Inicial ==========" );
         System.out.println("===================================================");
         System.out.println("====== (1) - Tela de Login");
