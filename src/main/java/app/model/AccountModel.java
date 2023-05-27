@@ -23,8 +23,16 @@ public class AccountModel {
 
 	}
 
-	//Construtor para saldo
+	//Construtor para saldo, transferencia e deposito   
 	public AccountModel(String id, BankModel bank) {
+
+		this.id = id;
+		this.bank = bank;
+
+	}
+	
+	//Construtor login
+	public AccountModel(String id, String password, BankModel bank) {
 
 		this.id = id;
 		this.bank = bank;
