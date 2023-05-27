@@ -4,9 +4,14 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import app.model.AccountModel;
+import app.model.BalanceModel;
 import app.model.BankModel;
+import app.model.DepositModel;
+import app.model.OperationsModel;
+import app.model.TransferModel;
 import app.model.UserModel;
 import app.utilities.BanksEnum;
+import application.exceptions.UnableToConnectException;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,27 +19,29 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-import application.car.CarApp;
-import application.exceptions.UnableToConnectException;
-import utilityclasses.ConfigLarsidIpsHttp;
-import utilityclasses.Http;
-import utilityclasses.RequestHttp;
-import utilityclasses.ResponseHttp;
-
 public class ClientApp {
-	private boolean connected = true;
+	private boolean connected;
 	private boolean log;
 	private boolean pick;
 	private Scanner scanner = new Scanner(System.in);
 	private String escolha;
-	private volatile BankModel bankIp;
+	private BankModel bankIp;
 	private AccountModel user;
+	private AccountModel userReceptor;
+	private OperationsModel operation;
+	private DepositModel deposit;
+	private TransferModel transfer;
+	private BalanceModel balance;
+
 	private UserModel beneficiareUser;
 
 	private void execBank() throws IOException, UnableToConnectException {
-		pickBank();
-		loginClient();
-		menuClient();
+		boolean connectedBank = true;
+		while (connectedBank) {
+			pickBank();
+			loginClient();
+			menuClient();
+		}
 
 	}
 
@@ -54,14 +61,14 @@ public class ClientApp {
 					escolha = changeGo(banco);
 					if (escolha.equals("1")) {
 
-						BankModel ipBank = setIpBank(banco);
+						bankIp = setBank(banco);
 						pick = false;
 					} else if (escolha.equals("2")) {
 						System.out.println("Escolha outro banco");
 
 					} else if (escolha.equals("3")) {
-						BankModel ipBank = setIpBank(banco);
-						registerUser(ipBank);
+						bankIp = setBank(banco);
+						registerUser(bankIp);
 
 					} else {
 						System.out.println("Digite uma opção correta");
@@ -77,7 +84,7 @@ public class ClientApp {
 
 	}
 
-	private BankModel setIpBank(String banco) {
+	private BankModel setBank(String banco) {
 		if (banco.equals("1")) {
 
 			bankIp = BanksEnum.BANK_1.getBank();
@@ -123,11 +130,12 @@ public class ClientApp {
 					count += 1;
 				}
 				user = new AccountModel(senhaRegister, ipBank, beneficiares);
+				// aqui transfere a nova conta pro servidor
 				register = false;
 			} else {
 				System.out.println("Esta conta devera ter ao menos um beneficiario");
 			}
-			
+
 		}
 
 	}
@@ -152,16 +160,11 @@ public class ClientApp {
 			System.out.println("========= Central bancaria: ==========");
 			System.out.println("===================================================");
 			System.out.println("====== Digite seu id: ======");
-			String cpf = scanner.next();
+			String id = scanner.next();
 			System.out.println("====== Digite sua senha: ======");
 			String senha = scanner.next();
-			Map<String, String> header = new HashMap<String, String>();
-			header.put("Content-Lenght", "0");
-			JSONObject json = new JSONObject();
-			json.put("cpf", cpf);
-			json.put("senha", senha);
-			ResponseHttp response;
-			response = messageReturn("GET", "/station/shorterQueue", "HTTP/1.1", header, json);
+			user = new AccountModel(id, senha, bankIp);
+			//fazer requisição e condicionais 
 		}
 	}
 
@@ -172,18 +175,65 @@ public class ClientApp {
 			System.out.println("===================================================");
 			System.out.println("====== (1) - Consultar Saldo");
 			System.out.println("====== (2) - Transferir dinheiro");
-			System.out.println("====== (3) - Desconectar");
+			System.out.println("====== (3) - Depositar dinheiro");
+			System.out.println("====== (4) - Desconectar");
 			System.out.println("=========== Digite a opcao desejada ===============");
 			String opcao = scanner.next();
+			if (opcao.equals("1") || opcao.equals("2") || opcao.equals("3") || opcao.equals("4")) {
+				if (opcao.equals("1")) {
+					consultBalance();
+				} else if (opcao.equals("2")) {
+					transferMoney();
+				} else if (opcao.equals("3")) {
+					depositMoney();
+				} else {
+					connected = false;
+				}
+
+			} else {
+				System.out.println("================ Digite uma opção correta ==================");
+			}
 		}
 	}
 
-	public ResponseHttp messageReturn(String method, String endpoint, String httpVersion, Map<String, String> header,
-			JSONObject json) throws IOException {
+	private void depositMoney() {
+		System.out.println("==================== Deposito =====================");
+		System.out.println("===================================================");
+		System.out.println("====== Digite o valor que deseja depositar:");
+		Double value = scanner.nextDouble();
+		deposit = new DepositModel(user, value);
+	}
 
-		ResponseHttp response = Http.sendHTTPRequestAndGetHttpResponse(new RequestHttp(method, endpoint, httpVersion, header), json);
-		return response;
+	private void transferMoney() {
+		Boolean transferLoop = true;
+		System.out.println("==================== Transferencia =====================");
+		System.out.println("===================================================");
+		System.out.println("====== Digite o valor que deseja Transferir:");
+		Double value = scanner.nextDouble();
+		System.out.println("====== Digite o id da conta de destino:");
+		String id = scanner.next();
+		while(transferLoop) {
+			System.out.println("====== Escolha o banco de destino: ======");
+			System.out.println("====== (1) - Banco 1");
+			System.out.println("====== (2) - Banco 2");
+			System.out.println("====== (3) - Banco 3");
+			System.out.println("====== (4) - Banco 4");
+			String banco = scanner.next();
+			if (banco.equals("1") || banco.equals("2") || banco.equals("3") || banco.equals("4")) {
+				BankModel receptorBank = setBank(banco);
+				userReceptor = new AccountModel(id,receptorBank);
+				transfer = new TransferModel(user, userReceptor, value);
+				
+			}else {
+				System.out.println("====== Escolha um banco correto ======");
+			}
+		}
+		
 
+	}
+
+	private void consultBalance() {
+		balance = new BalanceModel(user);
 	}
 
 	public static void main(String[] args) throws IOException, UnableToConnectException {
