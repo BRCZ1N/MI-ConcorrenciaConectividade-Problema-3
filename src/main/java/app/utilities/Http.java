@@ -70,7 +70,7 @@ public class Http {
 	 * @return um objeto ResponseHttp contendo a resposta HTTP, ou null se ocorrer um erro ao enviar a requisição ou receber a resposta
 	 * @throws IOException se ocorrer um erro ao enviar a requisição ou receber a resposta
 	 */
-	public static ResponseHttp sendHTTPRequestAndGetHttpResponse(RequestHttp requestHttp, String ip) throws IOException {
+	public static ResponseHttp sendHTTPRequestAndGetHttpResponse(RequestHttp requestHttp, String ip) throws IOException  {
 
 		OkHttpClient client = new OkHttpClient();
 		String url = ip + requestHttp.getPath();

@@ -1,11 +1,12 @@
 package app.services;
 
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.json.JSONObject;
 import org.springframework.stereotype.Component;
 
 import app.exceptions.InsufficientBalanceException;
@@ -14,6 +15,11 @@ import app.model.BalanceModel;
 import app.model.DepositModel;
 import app.model.TransferModel;
 import app.utilities.Http;
+import app.utilities.HttpCodes;
+import app.utilities.HttpMethods;
+import app.utilities.RequestHttp;
+import app.utilities.ResponseHttp;
+import io.netty.handler.codec.http.HttpVersion;
 
 @Component
 public class AccountServices {
@@ -117,12 +123,24 @@ public class AccountServices {
 					 
 				}else {
 					
-//					//Envia requisição HTTP do banco atual para o proximo banco, essa será uma requisição de deposito
-//					//Ajuste do erro de conta inexistente também aqui.
-					
-					ResponseEntity<String> response = Http.sendHTTPRequestAndGetHttpResponse(request, null)
-					
-					if(response.getStatusCode().equals(HttpStatus.OK)) {
+					RequestHttp request;
+					ResponseHttp response;
+					DepositModel deposit = new DepositModel(transfer.getAccountDestiny(),transfer.getValue());
+					JSONObject json = new JSONObject(deposit);
+					Map<String, String> header = new HashMap<String, String>();
+					header.put("Content-Type","application/json");
+							
+					try {
+						
+						request = new RequestHttp(HttpMethods.GET.getMethod(),"/account/deposit",HttpVersion.HTTP_1_1.toString(),header,json.toString());
+						response = Http.sendHTTPRequestAndGetHttpResponse(request, transfer.getAccountDestiny().getBank().getIp());
+						
+					} catch (IOException e) {
+						
+						return Optional.empty();
+						
+					}
+					if(response.getStatusLine().equals(HttpCodes.HTTP_200.getCodeHttp())) {
 						
 						accountOrigin = optionalAccountOrigin.get();
 						accountOrigin.setBalance(accountOrigin.getBalance() - transfer.getValue());

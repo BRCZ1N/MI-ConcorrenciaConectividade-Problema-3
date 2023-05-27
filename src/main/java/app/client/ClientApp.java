@@ -1,7 +1,8 @@
 package app.client;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Scanner;
 
 import app.model.AccountModel;
 import app.model.BalanceModel;
@@ -12,12 +13,6 @@ import app.model.TransferModel;
 import app.model.UserModel;
 import app.utilities.BanksEnum;
 import application.exceptions.UnableToConnectException;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
 
 public class ClientApp {
 	private boolean connected;
