@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 
 import app.exceptions.InsufficientBalanceException;
 import app.model.AccountModel;
-import app.model.BalanceModel;
 import app.model.DepositModel;
 import app.model.TransferModel;
 
@@ -65,20 +64,6 @@ public class AccountServices {
 		return Optional.of(clientAccount);
 
 	}
-	
-	public Optional<AccountModel> getBalanceOperation(BalanceModel balance) {
-
-		Optional<AccountModel> resultSearch = searchAccount(balance.getAccount());
-
-		if (resultSearch.isEmpty()) {
-
-			return resultSearch;
-
-		}
-
-		return Optional.of(resultSearch.get());
-
-	}
 
 	public Optional<AccountModel> transferOperation(TransferModel transfer)throws InsufficientBalanceException {
 
@@ -116,18 +101,18 @@ public class AccountServices {
 					
 //					//Envia requisição HTTP do banco atual para o proximo banco, essa será uma requisição de deposito
 //					//Ajuste do erro de conta inexistente também aqui.
-					if(HttpResponse.getStatusLine().equals(HttpStatus.OK)) {
-						
-						accountOrigin = optionalAccountOrigin.get();
-						accountOrigin.setBalance(accountOrigin.getBalance() - transfer.getValue());
-						
-						return Optional.of(accountOrigin);
-						
-					}else {
-						
+//					if(HttpResponse.getStatusLine().equals(HttpStatus.OK)) {
+//						
+//						accountOrigin = optionalAccountOrigin.get();
+//						accountOrigin.setBalance(accountOrigin.getBalance() - transfer.getValue());
+//						
+//						return Optional.of(accountOrigin);
+//						
+//					}else {
+//						
 						return Optional.empty();
-						
-					}
+//						
+//					}
 					
 				}
 

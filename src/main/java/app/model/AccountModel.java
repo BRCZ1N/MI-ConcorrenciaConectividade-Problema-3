@@ -14,7 +14,6 @@ public class AccountModel {
 
 	}
 
-	//Construtuor padrão da conta para criação
 	public AccountModel(String password, BankModel bank, ArrayList<UserModel> beneficiares) {
 
 		this.password = password;
@@ -23,7 +22,6 @@ public class AccountModel {
 
 	}
 
-	//Construtor para saldo
 	public AccountModel(String id, BankModel bank) {
 
 		this.id = id;

@@ -4,7 +4,7 @@ public enum OperationType {
 
 	OP_TRANSFER("Operacao de transferencia"),
 	OP_DEPOSIT("Operacao de deposito"),
-	OP_BALANCE("Operacao de saldo");
+	OP_PAYMENT("Operacao de pagamento");
 
 	private String typeOperation;
 

@@ -5,11 +5,10 @@ import app.utilities.OperationType;
 public class DepositModel extends OperationsModel {
 
 	private AccountModel account;
-	private Double value;
 
-	public DepositModel(AccountModel account, Double value) {
+	public DepositModel(AccountModel account, double value, String description) {
 
-		super(OperationType.OP_DEPOSIT);
+		super(value, OperationType.OP_DEPOSIT, description);
 		this.account = account;
 
 	}
@@ -20,14 +19,6 @@ public class DepositModel extends OperationsModel {
 
 	public void setAccount(AccountModel account) {
 		this.account = account;
-	}
-
-	public Double getValue() {
-		return value;
-	}
-
-	public void setValue(Double value) {
-		this.value = value;
 	}
 
 }
