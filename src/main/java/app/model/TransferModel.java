@@ -6,12 +6,14 @@ public class TransferModel extends OperationsModel {
 
 	private AccountModel accountOrigin;
 	private AccountModel accountDestiny;
+	private Double value;
 
-	public TransferModel(AccountModel accountOrigin, AccountModel accountDestiny, double value, String description) {
+	public TransferModel(AccountModel accountOrigin, AccountModel accountDestiny, Double value) {
 
-		super(value, OperationType.OP_TRANSFER, description);
+		super(OperationType.OP_TRANSFER);
 		this.accountOrigin = accountOrigin;
 		this.accountDestiny = accountDestiny;
+		this.value = value;
 
 	}
 
@@ -29,6 +31,14 @@ public class TransferModel extends OperationsModel {
 
 	public void setAccountDestiny(AccountModel accountDestiny) {
 		this.accountDestiny = accountDestiny;
+	}
+
+	public Double getValue() {
+		return value;
+	}
+
+	public void setValue(Double value) {
+		this.value = value;
 	}
 
 }

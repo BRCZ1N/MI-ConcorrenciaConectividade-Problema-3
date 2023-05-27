@@ -14,6 +14,8 @@ import org.springframework.stereotype.Component;
 @EnableAutoConfiguration
 @ComponentScan("app.controllers")
 @ComponentScan("app.services")
+@ComponentScan("app.interceptors")
+@ComponentScan("app.config")
 @Component
 public class BankApp {
 

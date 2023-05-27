@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import app.exceptions.InsufficientBalanceException;
 import app.model.AccountModel;
+import app.model.BalanceModel;
 import app.model.DepositModel;
 import app.model.TransferModel;
 import app.services.AccountServices;
@@ -53,6 +55,21 @@ public class AccountController {
 		return ResponseEntity.status(HttpStatus.CREATED).body("Sucesso");
 
 	}
+	
+	@GetMapping("/balance")
+	public ResponseEntity<String> getBalance(@RequestBody BalanceModel balance) {
+
+		Optional<AccountModel> resultOptional = service.getBalanceOperation(balance);
+		if (resultOptional.isEmpty()) {
+
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado");
+
+		}
+
+		return ResponseEntity.status(HttpStatus.OK).body(resultOptional.get().getBalance().toString());
+
+	}
+
 
 	@PutMapping("/deposit")
 	public ResponseEntity<String> deposit(@RequestBody DepositModel deposit) {
@@ -67,7 +84,7 @@ public class AccountController {
 		return ResponseEntity.status(HttpStatus.OK).body("Operação realizada com sucesso");
 
 	}
-
+	
 	@PutMapping("/transfer")
 	public ResponseEntity<String> transfer(@RequestBody TransferModel transfer) {
 
