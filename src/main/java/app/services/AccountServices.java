@@ -3,13 +3,15 @@ package app.services;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-import org.springframework.http.HttpStatus;
+
+import org.springframework.stereotype.Component;
+
 import app.exceptions.InsufficientBalanceException;
 import app.model.AccountModel;
-import io.netty.handler.codec.http.HttpResponse;
 import app.model.DepositModel;
 import app.model.TransferModel;
 
+@Component
 public class AccountServices {
 
 	private Map<String, AccountModel> accounts;
@@ -97,20 +99,20 @@ public class AccountServices {
 					 
 				}else {
 					
-					//Envia requisição HTTP do banco atual para o proximo banco, essa será uma requisição de deposito
-					//Ajuste do erro de conta inexistente também aqui.
-					if(HttpResponse.getStatusLine().equals(HttpStatus.OK)) {
-						
-						accountOrigin = optionalAccountOrigin.get();
-						accountOrigin.setBalance(accountOrigin.getBalance() - transfer.getValue());
-						
-						return Optional.of(accountOrigin);
-						
-					}else {
-						
+//					//Envia requisição HTTP do banco atual para o proximo banco, essa será uma requisição de deposito
+//					//Ajuste do erro de conta inexistente também aqui.
+//					if(HttpResponse.getStatusLine().equals(HttpStatus.OK)) {
+//						
+//						accountOrigin = optionalAccountOrigin.get();
+//						accountOrigin.setBalance(accountOrigin.getBalance() - transfer.getValue());
+//						
+//						return Optional.of(accountOrigin);
+//						
+//					}else {
+//						
 						return Optional.empty();
-						
-					}
+//						
+//					}
 					
 				}
 
