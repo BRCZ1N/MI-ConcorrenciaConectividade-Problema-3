@@ -5,9 +5,11 @@ import org.json.JSONObject;
 
 import app.model.AccountModel;
 import app.model.BankModel;
+import app.model.UserModel;
 import app.utilities.BanksEnum;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -21,12 +23,14 @@ import utilityclasses.ResponseHttp;
 
 public class ClientApp {
 	private boolean connected = true;
-	private boolean log = true;
-	private boolean pick = true;
+	private boolean log;
+	private boolean pick;
 	private Scanner scanner = new Scanner(System.in);
 	private String escolha;
 	private volatile BankModel bankIp;
 	private AccountModel user;
+	private UserModel beneficiareUser;
+
 	private void execBank() throws IOException, UnableToConnectException {
 		pickBank();
 		loginClient();
@@ -88,31 +92,44 @@ public class ClientApp {
 			bankIp = BanksEnum.BANK_4.getBank();
 		}
 		return bankIp;
-		
+
 	}
 
 	/**
 	 * @param ipBank
 	 */
 	private void registerUser(BankModel ipBank) {
-		
-		System.out.println("====== Digite a senha desejada: ======");
-		String senhaRegister = scanner.next();
-		System.out.println("====== Deseja Cadastrar quantos beneficiarios: ======");
-		int countBeneficiares = scanner.nextInt();
+
+		ArrayList<UserModel> beneficiares = new ArrayList<UserModel>();
+		boolean register = true;
 		int count = 0;
-		if (countBeneficiares > 0) {
-			while(countBeneficiares != count) {
-				System.out.println("====== Digite o nome do beneficiario: ======");
-				String beneficiareName = scanner.next();
-				System.out.println("====== Digite o cpf do beneficiario: ======");
-				String beneficiareCpf = scanner.next();
-				
-				count += 1;
+		while (register) {
+			System.out.println("====== Digite a senha desejada: ======");
+			String senhaRegister = scanner.next();
+			System.out.println("====== Deseja Cadastrar quantos beneficiarios: ======");
+			int countBeneficiares = scanner.nextInt();
+
+			if (countBeneficiares > 1) {
+
+				while (countBeneficiares != count) {
+					System.out.println("====== Digite o nome do beneficiario: ======");
+					String beneficiareName = scanner.next();
+					System.out.println("====== Digite o cpf do beneficiario: ======");
+					String beneficiareCpf = scanner.next();
+
+					beneficiareUser = new UserModel(beneficiareName, beneficiareCpf);
+					beneficiares.add(beneficiareUser);
+
+					count += 1;
+				}
+				user = new AccountModel(senhaRegister, ipBank, beneficiares);
+				register = false;
+			} else {
+				System.out.println("Esta conta devera ter ao menos um beneficiario");
 			}
-		}else {
-			user = new AccountModel(senhaRegister, ipBank , null);
+			
 		}
+
 	}
 
 	private String changeGo(String banco) {
