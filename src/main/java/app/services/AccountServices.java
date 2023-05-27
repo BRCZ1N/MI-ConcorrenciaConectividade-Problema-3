@@ -29,7 +29,7 @@ public class AccountServices {
 		this.accounts = accounts;
 	}
 
-	public synchronized Optional<AccountModel> createAccount(AccountModel client) {
+	public Optional<AccountModel> createAccount(AccountModel client) {
 		
 		if (accounts.containsValue(client)) {
 
@@ -46,7 +46,7 @@ public class AccountServices {
 	}
 	
 
-	public synchronized Optional<AccountModel> depositOperation(DepositModel deposit) {
+	public Optional<AccountModel> depositOperation(DepositModel deposit) {
 
 		Optional<AccountModel> resultSearch = searchAccount(deposit.getAccount());
 
@@ -63,7 +63,7 @@ public class AccountServices {
 
 	}
 
-	public synchronized Optional<AccountModel> transferOperation(TransferModel transfer)throws InsufficientBalanceException {
+	public Optional<AccountModel> transferOperation(TransferModel transfer)throws InsufficientBalanceException {
 
 		Optional<AccountModel> optionalAccountOrigin = searchAccount(transfer.getAccountOrigin());
 		Optional<AccountModel> optionalAccountDestiny = searchAccount(transfer.getAccountDestiny());
