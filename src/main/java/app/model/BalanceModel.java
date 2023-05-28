@@ -5,6 +5,11 @@ import app.utilities.OperationType;
 public class BalanceModel extends OperationsModel{
 
 	private AccountModel account;
+	
+	public BalanceModel(OperationType type, AccountModel account) {
+		super(type);
+		this.account = account;
+	}
 
 	public BalanceModel(AccountModel account) {
 

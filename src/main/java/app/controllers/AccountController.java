@@ -29,9 +29,9 @@ public class AccountController {
 	private AccountServices service;
 
 	@PostMapping("/auth")
-	public ResponseEntity<String> authAccount(@RequestBody AccountModel user) {
+	public ResponseEntity<String> authAccount(@RequestBody AccountModel account) {
 
-		Optional<AccountModel> resultOptional = service.searchAccount(user);
+		Optional<AccountModel> resultOptional = service.accountByIdAndPassword(account);
 		if (resultOptional.isEmpty()) {
 
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario não encontrado");
@@ -43,9 +43,9 @@ public class AccountController {
 	}
 	
 	@PostMapping("/createUser")
-	public ResponseEntity<String> createUser(@RequestBody AccountModel user) {
+	public ResponseEntity<String> createUser(@RequestBody AccountModel account) {
 
-		Optional<AccountModel> resultOptional = service.createAccount(user);
+		Optional<AccountModel> resultOptional = service.createAccount(account);
 		if (resultOptional.isEmpty()) {
 
 			return ResponseEntity.status(HttpStatus.CONFLICT).body("Usuario já foi cadastrado");

@@ -60,7 +60,7 @@ public class AccountServices {
 
 	public Optional<AccountModel> depositOperation(DepositModel deposit) {
 
-		Optional<AccountModel> resultSearch = searchAccount(deposit.getAccount());
+		Optional<AccountModel> resultSearch = accountById(deposit.getAccount().getId());
 
 		if (resultSearch.isEmpty()) {
 
@@ -77,7 +77,7 @@ public class AccountServices {
 	
 	public Optional<AccountModel> getBalanceOperation(BalanceModel balance) {
 
-		Optional<AccountModel> resultSearch = searchAccount(balance.getAccount());
+		Optional<AccountModel> resultSearch = accountById(balance.getAccount().getId());
 
 		if (resultSearch.isEmpty()) {
 
@@ -91,8 +91,8 @@ public class AccountServices {
 
 	public Optional<AccountModel> transferOperation(TransferModel transfer)throws InsufficientBalanceException {
 
-		Optional<AccountModel> optionalAccountOrigin = searchAccount(transfer.getAccountOrigin());
-		Optional<AccountModel> optionalAccountDestiny = searchAccount(transfer.getAccountDestiny());
+		Optional<AccountModel> optionalAccountOrigin = accountById(transfer.getAccountOrigin().getId());
+		Optional<AccountModel> optionalAccountDestiny = accountById(transfer.getAccountDestiny().getId());
 		AccountModel accountOrigin;
 		AccountModel accountDestiny;
 		
@@ -161,11 +161,27 @@ public class AccountServices {
 
 	}
 
-	public Optional<AccountModel> searchAccount(AccountModel client) {
+	public Optional<AccountModel> accountByIdAndPassword(AccountModel client) {
 
 		for (Map.Entry<String, AccountModel> entry : accounts.entrySet()) {
 
 			if (entry.getKey().equals(client.getId()) && entry.getValue().getPassword().equals(client.getPassword())) {
+
+				return Optional.of(entry.getValue());
+
+			}
+
+		}
+
+		return Optional.empty();
+
+	}
+	
+	public Optional<AccountModel> accountById(String id) {
+
+		for (Map.Entry<String, AccountModel> entry : accounts.entrySet()) {
+
+			if (entry.getKey().equals(id)) {
 
 				return Optional.of(entry.getValue());
 
