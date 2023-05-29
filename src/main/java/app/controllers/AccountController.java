@@ -2,6 +2,7 @@ package app.controllers;
 
 import java.util.Optional;
 
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
@@ -28,22 +29,22 @@ public class AccountController {
 	@Autowired
 	private AccountServices service;
 
-	@PostMapping("/auth")
+	@GetMapping("/auth")
 	public ResponseEntity<String> authAccount(@RequestBody AccountModel account) {
 
-		Optional<AccountModel> resultOptional = service.accountByIdAndPassword(account);
+		Optional<AccountModel> resultOptional = service.findByIdAndPassword(account);
 		if (resultOptional.isEmpty()) {
 
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario não encontrado");
 
 		}
 
-		return ResponseEntity.status(HttpStatus.OK).body("Sucesso");
+		return ResponseEntity.status(HttpStatus.OK).body(new JSONObject(resultOptional.get()).toString());
 
 	}
 	
 	@PostMapping("/createUser")
-	public ResponseEntity<String> createUser(@RequestBody AccountModel account) {
+	public ResponseEntity<String> createAccount(@RequestBody AccountModel account) {
 
 		Optional<AccountModel> resultOptional = service.createAccount(account);
 		if (resultOptional.isEmpty()) {
@@ -72,7 +73,7 @@ public class AccountController {
 
 
 	@PutMapping("/deposit")
-	public ResponseEntity<String> deposit(@RequestBody DepositModel deposit) {
+	public ResponseEntity<String> makeDeposit(@RequestBody DepositModel deposit) {
 
 		Optional<AccountModel> resultOptional = service.depositOperation(deposit);
 		if (resultOptional.isEmpty()) {
@@ -86,7 +87,7 @@ public class AccountController {
 	}
 	
 	@PutMapping("/transfer")
-	public ResponseEntity<String> transfer(@RequestBody TransferModel transfer) {
+	public ResponseEntity<String> makeTransfer(@RequestBody TransferModel transfer) {
 
 		try {
 
