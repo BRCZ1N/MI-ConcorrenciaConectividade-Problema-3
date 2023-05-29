@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 
 import app.exceptions.InsufficientBalanceException;
 import app.model.AccountModel;
-import app.model.BalanceModel;
 import app.model.DepositModel;
 import app.model.TransferModel;
 import app.utilities.Http;
@@ -75,9 +74,9 @@ public class AccountServices {
 
 	}
 	
-	public Optional<AccountModel> getBalanceOperation(BalanceModel balance) {
+	public Optional<AccountModel> getBalanceOperation(String id) {
 
-		Optional<AccountModel> resultSearch = findById(balance.getAccount().getId());
+		Optional<AccountModel> resultSearch = findById(id);
 
 		if (resultSearch.isEmpty()) {
 
