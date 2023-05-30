@@ -75,8 +75,7 @@ public class Http {
 		OkHttpClient client = new OkHttpClient();
 		String url = ip + requestHttp.getPath();
 		Request request = new Request.Builder().url(url).method(requestHttp.getMethod(),(requestHttp.getBody() == null ? null : RequestBody.create(requestHttp.getBody().getBytes("UTF-8")))).headers(Headers.of(requestHttp.getHeaders())).build();
-		Response response;
-		response = client.newCall(request).execute();
+		Response response = client.newCall(request).execute();
 		ResponseHttp responseHttp = formatHTTPResponse(response);
 
 		return responseHttp;

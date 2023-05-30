@@ -1,8 +1,6 @@
 package app.controllers;
 
 import java.util.Optional;
-
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
@@ -16,8 +14,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import app.exceptions.InsufficientBalanceException;
+import app.exceptions.ServerConnectionException;
 import app.model.AccountModel;
 import app.model.DepositModel;
+import app.model.LoginAccountModel;
 import app.model.MessageModel;
 import app.model.TransferModel;
 import app.services.AccountServices;
@@ -30,12 +30,17 @@ public class AccountController {
 	@Autowired
 	private AccountServices service;
 	private MessageModel message;
+	
+	public AccountController() {
+		
+		this.message = new MessageModel();
+		
+	}
 
-	@GetMapping("/auth")
-	public ResponseEntity<String> authAccount(@RequestBody AccountModel account) {
+	@PostMapping("/auth")
+	public ResponseEntity<String> authAccount(@RequestBody LoginAccountModel login) {
 
-		Optional<AccountModel> resultOptional = service.findByIdAndPassword(account);
-		if (resultOptional.isEmpty()) {
+		if (!service.authenticate(login)) {
 
 			message.setMessage("Erro!! - Conta não encontrada");
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message.toJSON());
@@ -43,8 +48,7 @@ public class AccountController {
 		}
 
 		message.setMessage("Sucesso!! - Conta autenticada");
-//		return ResponseEntity.status(HttpStatus.OK).body(message.toJSON());
-		return ResponseEntity.status(HttpStatus.OK).body(new JSONObject(resultOptional.get()).toString());
+		return ResponseEntity.status(HttpStatus.OK).body(message.toJSON());
 
 	}
 	
@@ -65,7 +69,7 @@ public class AccountController {
 	}
 	
 	@GetMapping("/balance")
-	public ResponseEntity<String> getBalance(@RequestParam String id) {
+	public ResponseEntity<String> getBalance(@RequestParam("id") String id) {
 
 		Optional<AccountModel> resultOptional = service.getBalanceOperation(id);
 		if (resultOptional.isEmpty()) {
@@ -75,7 +79,7 @@ public class AccountController {
 
 		}
 		
-		message.setMessage("Sucesso!! - O seu saldo é: "+ resultOptional.get().getBalance()+" R$");
+		message.setMessage("O seu saldo é: "+ resultOptional.get().getBalance()+" R$");
 		return ResponseEntity.status(HttpStatus.OK).body(message.toJSON());
 
 	}
@@ -116,9 +120,13 @@ public class AccountController {
 
 		} catch (InsufficientBalanceException e) {
 
-			message.setMessage("Erro!! - Saldo insuficiente");
+			message.setMessage("Erro!! - "+e.getMessage());
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message.toJSON());
 
+		} catch (ServerConnectionException e) {
+			
+			message.setMessage("Erro!! - "+e.getMessage());
+			return ResponseEntity.status(HttpStatus.GATEWAY_TIMEOUT).body(message.toJSON());
 		}
 
 	}

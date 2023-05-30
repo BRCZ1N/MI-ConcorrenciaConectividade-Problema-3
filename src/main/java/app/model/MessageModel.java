@@ -6,6 +6,10 @@ public class MessageModel {
 
 	private String message;
 
+	public MessageModel() {
+
+	}
+
 	public MessageModel(String message) {
 
 		this.message = message;
@@ -22,7 +26,8 @@ public class MessageModel {
 
 	public String toJSON() {
 
-		JSONObject json = new JSONObject(this.message);
+		JSONObject json = new JSONObject();
+		json.put("message", this.message);
 		String jsonFormatMessage = json.toString();
 
 		return jsonFormatMessage;

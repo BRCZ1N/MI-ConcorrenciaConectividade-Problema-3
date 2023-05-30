@@ -1,14 +1,16 @@
 package app.model;
 
+import org.json.JSONObject;
+
 import app.utilities.OperationType;
 
 public class TransferModel extends OperationsModel {
 
-	private AccountModel accountOrigin;
-	private AccountModel accountDestiny;
+	private OperationAccountModel accountOrigin;
+	private OperationAccountModel accountDestiny;
 	private Double value;
 
-	public TransferModel(AccountModel accountOrigin, AccountModel accountDestiny, Double value) {
+	public TransferModel(OperationAccountModel accountOrigin, OperationAccountModel accountDestiny,Double value) {
 
 		super(OperationType.OP_TRANSFER);
 		this.accountOrigin = accountOrigin;
@@ -17,19 +19,19 @@ public class TransferModel extends OperationsModel {
 
 	}
 
-	public AccountModel getAccountOrigin() {
+	public OperationAccountModel getAccountOrigin() {
 		return accountOrigin;
 	}
 
-	public void setAccountOrigin(AccountModel accountOrigin) {
+	public void setAccountOrigin(OperationAccountModel accountOrigin) {
 		this.accountOrigin = accountOrigin;
 	}
 
-	public AccountModel getAccountDestiny() {
+	public OperationAccountModel getAccountDestiny() {
 		return accountDestiny;
 	}
 
-	public void setAccountDestiny(AccountModel accountDestiny) {
+	public void setAccountDestiny(OperationAccountModel accountDestiny) {
 		this.accountDestiny = accountDestiny;
 	}
 
@@ -39,6 +41,20 @@ public class TransferModel extends OperationsModel {
 
 	public void setValue(Double value) {
 		this.value = value;
+	}
+	
+	public String toJSON() {
+
+		JSONObject json = new JSONObject();
+		
+		json.put("accountOrigin", this.accountOrigin);
+		json.put("accountDestiny", this.accountDestiny);
+		json.put("value", this.value);
+		
+		String jsonFormatMessage = json.toString();
+		
+		return jsonFormatMessage;
+
 	}
 
 }

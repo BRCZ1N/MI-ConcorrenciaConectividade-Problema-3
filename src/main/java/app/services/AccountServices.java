@@ -5,13 +5,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-
-import org.json.JSONObject;
 import org.springframework.stereotype.Component;
-
 import app.exceptions.InsufficientBalanceException;
+import app.exceptions.ServerConnectionException;
 import app.model.AccountModel;
 import app.model.DepositModel;
+import app.model.LoginAccountModel;
 import app.model.TransferModel;
 import app.utilities.Http;
 import app.utilities.HttpCodes;
@@ -41,7 +40,7 @@ public class AccountServices {
 	}
 
 	public Optional<AccountModel> createAccount(AccountModel client) {
-		
+
 		if (accounts.containsValue(client)) {
 
 			return Optional.empty();
@@ -55,11 +54,10 @@ public class AccountServices {
 		return Optional.of(client);
 
 	}
-	
 
 	public Optional<AccountModel> depositOperation(DepositModel deposit) {
 
-		Optional<AccountModel> resultSearch = findById(deposit.getAccount().getId());
+		Optional<AccountModel> resultSearch = findById(deposit.getAccount().getIdAccount());
 
 		if (resultSearch.isEmpty()) {
 
@@ -73,7 +71,7 @@ public class AccountServices {
 		return Optional.of(clientAccount);
 
 	}
-	
+
 	public Optional<AccountModel> getBalanceOperation(String id) {
 
 		Optional<AccountModel> resultSearch = findById(id);
@@ -88,71 +86,87 @@ public class AccountServices {
 
 	}
 
-	public Optional<AccountModel> transferOperation(TransferModel transfer)throws InsufficientBalanceException {
+	public Optional<AccountModel> transferOperation(TransferModel transfer) throws InsufficientBalanceException, ServerConnectionException {
 
-		Optional<AccountModel> optionalAccountOrigin = findById(transfer.getAccountOrigin().getId());
-		Optional<AccountModel> optionalAccountDestiny = findById(transfer.getAccountDestiny().getId());
 		AccountModel accountOrigin;
 		AccountModel accountDestiny;
-		
-		if (optionalAccountOrigin.isEmpty()) {
+		Optional<AccountModel> resultSearchAccountOrigin;
+		Optional<AccountModel> resultSearchAccountDestiny;
 
-			return optionalAccountOrigin;
+		if (transfer.getAccountOrigin().getBank().getId().equals(transfer.getAccountDestiny().getBank().getId())) {
 
-		} else {
+			resultSearchAccountOrigin = findById(transfer.getAccountOrigin().getIdAccount());
+			resultSearchAccountDestiny = findById(transfer.getAccountDestiny().getIdAccount());
 
-			if (optionalAccountOrigin.get().getBalance() < transfer.getValue()) {
+			if (resultSearchAccountOrigin.isEmpty() || resultSearchAccountDestiny.isEmpty()) {
+
+				return Optional.empty();
+
+			} else {
+
+				accountOrigin = resultSearchAccountOrigin.get();
+				accountDestiny = resultSearchAccountDestiny.get();
+
+				if (accountOrigin.getBalance() < transfer.getValue()) {
+
+					throw new InsufficientBalanceException();
+
+				} else {
+
+					accountOrigin.setBalance(accountOrigin.getBalance() - transfer.getValue());
+					accountDestiny.setBalance(accountDestiny.getBalance() + transfer.getValue());
+
+					accounts.replace(accountOrigin.getId(), accountOrigin);
+					accounts.replace(accountDestiny.getId(), accountDestiny);
+
+					return Optional.of(accountOrigin);
+
+				}
+			}
+			
+		}else {
+
+			resultSearchAccountOrigin = findById(transfer.getAccountOrigin().getIdAccount());
+			
+			if (resultSearchAccountOrigin.isEmpty()) {
+
+				return Optional.empty();
+
+			}
+			
+			accountOrigin = resultSearchAccountOrigin.get();
+			
+			if (accountOrigin.getBalance() < transfer.getValue()) {
 
 				throw new InsufficientBalanceException();
 
+			}
+
+			RequestHttp request;
+			ResponseHttp response;
+			DepositModel deposit = new DepositModel(transfer.getAccountDestiny(), transfer.getValue());
+			Map<String, String> header = new HashMap<String, String>();
+			header.put("Content-Type", "application/json");
+
+			try {
+
+				request = new RequestHttp(HttpMethods.PUT.getMethod(), "/account/deposit",HttpVersion.HTTP_1_1.toString(), header, deposit.toJSON());
+				response = Http.sendHTTPRequestAndGetHttpResponse(request,transfer.getAccountDestiny().getBank().getIp());
+
+			} catch (IOException e) {
+
+				throw new ServerConnectionException();
+
+			}
+			if (response.getStatusLine().equals(HttpCodes.HTTP_200.getCodeHttp())) {
+
+				accountOrigin.setBalance(accountOrigin.getBalance() - transfer.getValue());
+
+				return Optional.of(accountOrigin);
+
 			} else {
-				
-				if(transfer.getAccountOrigin().getBank().equals(transfer.getAccountDestiny().getBank())) {
-					 
-					 accountOrigin = optionalAccountOrigin.get();
-					 accountDestiny = optionalAccountDestiny.get();
-					 
-					 accountOrigin.setBalance(accountOrigin.getBalance() - transfer.getValue());
-					 accountDestiny.setBalance(accountDestiny.getBalance() + transfer.getValue());
-					 
-					 accounts.replace(accountOrigin.getId(), accountOrigin); 
-					 accounts.replace(accountDestiny.getId(), accountDestiny); 
-					
-					 return Optional.of(accountOrigin);
-					 
-				}else {
-					
-					RequestHttp request;
-					ResponseHttp response;
-					DepositModel deposit = new DepositModel(transfer.getAccountDestiny(),transfer.getValue());
-					JSONObject json = new JSONObject(deposit);
-					Map<String, String> header = new HashMap<String, String>();
-					header.put("Content-Type","application/json");
-							
-					try {
-						
-						request = new RequestHttp(HttpMethods.GET.getMethod(),"/account/deposit",HttpVersion.HTTP_1_1.toString(),header,json.toString());
-						response = Http.sendHTTPRequestAndGetHttpResponse(request, transfer.getAccountDestiny().getBank().getIp());
-						
-					} catch (IOException e) {
-						
-						return Optional.empty();
-						
-					}
-					if(response.getStatusLine().equals(HttpCodes.HTTP_200.getCodeHttp())) {
-						
-						accountOrigin = optionalAccountOrigin.get();
-						accountOrigin.setBalance(accountOrigin.getBalance() - transfer.getValue());
-						
-						return Optional.of(accountOrigin);
-						
-					}else {
-						
-						return Optional.empty();
-						
-					}
-					
-				}
+
+				return Optional.empty();
 
 			}
 
@@ -160,22 +174,23 @@ public class AccountServices {
 
 	}
 
-	public Optional<AccountModel> findByIdAndPassword(AccountModel client) {
+
+	public boolean authenticate(LoginAccountModel account) {
 
 		for (Map.Entry<String, AccountModel> entry : accounts.entrySet()) {
 
-			if (entry.getKey().equals(client.getId()) && entry.getValue().getPassword().equals(client.getPassword())) {
+			if (entry.getKey().equals(account.getId()) && entry.getValue().getPassword().equals(account.getPassword())) {
 
-				return Optional.of(entry.getValue());
+				return true;
 
 			}
 
 		}
 
-		return Optional.empty();
+		return false;
 
 	}
-	
+
 	public Optional<AccountModel> findById(String id) {
 
 		for (Map.Entry<String, AccountModel> entry : accounts.entrySet()) {
