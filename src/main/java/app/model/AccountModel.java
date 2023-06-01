@@ -2,6 +2,8 @@ package app.model;
 
 import java.util.ArrayList;
 
+import org.json.JSONObject;
+
 public class AccountModel {
 
 	private String id;
@@ -79,6 +81,18 @@ public class AccountModel {
 	public void setBank(BankModel bank) {
 
 		this.bank = bank;
+
+	}
+	public String toJSON() {
+
+		JSONObject json = new JSONObject();
+		
+		json.put("password", this.password);
+		json.put("bank", this.bank);
+		json.put("beneficiares", this.beneficiares);
+		String jsonFormatMessage = json.toString();
+		
+		return jsonFormatMessage;
 
 	}
 

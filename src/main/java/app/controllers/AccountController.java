@@ -52,7 +52,7 @@ public class AccountController {
 
 	}
 	
-	@PostMapping("/createUser")
+	@PostMapping("/create")
 	public ResponseEntity<String> createAccount(@RequestBody AccountModel account) {
 
 		Optional<AccountModel> resultOptional = service.createAccount(account);
