@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Scanner;
 
 import app.exceptions.ServerConnectionException;
@@ -13,7 +12,6 @@ import app.model.BankModel;
 import app.model.DepositModel;
 import app.model.LoginAccountModel;
 import app.model.OperationAccountModel;
-import app.model.OperationsModel;
 import app.model.TransferModel;
 import app.model.UserModel;
 import app.utilities.BanksEnum;
@@ -21,28 +19,25 @@ import app.utilities.Http;
 import app.utilities.HttpMethods;
 import app.utilities.RequestHttp;
 import app.utilities.ResponseHttp;
-import application.exceptions.UnableToConnectException;
 import io.netty.handler.codec.http.HttpVersion;
 
 public class ClientApp {
 	private boolean connected;
 	private boolean log;
 	private boolean pick;
-	
+
 	private Scanner scanner = new Scanner(System.in);
 	private String escolha;
 	private BankModel bankIp;
 	private AccountModel user;
-	private OperationsModel operation;
 	private TransferModel transfer;
 	private OperationAccountModel operationAccount;
 	private LoginAccountModel userLogin;
 	private UserModel beneficiareUser;
-	private Optional<AccountModel> createAccount;
 	private String id;
 	private String password;
 
-	private void execBank() throws IOException, UnableToConnectException, ServerConnectionException {
+	private void execBank() throws IOException, ServerConnectionException {
 		boolean connectedBank = true;
 		while (connectedBank) {
 			pickBank();
@@ -72,7 +67,7 @@ public class ClientApp {
 						bankIp = setBank(banco);
 						picktwo = false;
 						pick = false;
-					
+
 					} else if (escolha.equals("2")) {
 						System.out.println("Escolha outro banco");
 						picktwo = false;
@@ -114,7 +109,7 @@ public class ClientApp {
 
 	/**
 	 * @param ipBank
-	 * @throws ServerConnectionException 
+	 * @throws ServerConnectionException
 	 */
 	private void registerUser(BankModel ipBank) throws ServerConnectionException {
 
@@ -130,6 +125,7 @@ public class ClientApp {
 			if (countBeneficiares > 1) {
 
 				while (countBeneficiares != count) {
+
 					System.out.println("====== Digite o nome do beneficiario: ======");
 					String beneficiareName = scanner.next();
 					System.out.println("====== Digite o cpf do beneficiario: ======");
@@ -148,8 +144,9 @@ public class ClientApp {
 
 				try {
 
-					request = new RequestHttp(HttpMethods.POST.getMethod(), "/account/create",HttpVersion.HTTP_1_1.toString(), header, user.toJSON());
-					response = Http.sendHTTPRequestAndGetHttpResponse(request,ipBank.getIp());
+					request = new RequestHttp(HttpMethods.POST.getMethod(), "/account/create",
+							HttpVersion.HTTP_1_1.toString(), header, user.toJSON());
+					response = Http.sendHTTPRequestAndGetHttpResponse(request, ipBank.getIp());
 
 				} catch (IOException e) {
 
@@ -235,15 +232,16 @@ public class ClientApp {
 
 		try {
 
-			request = new RequestHttp(HttpMethods.PUT.getMethod(), "/deposit",HttpVersion.HTTP_1_1.toString(), header, deposit.toJSON());
-			response = Http.sendHTTPRequestAndGetHttpResponse(request,bankIp.getIp());
+			request = new RequestHttp(HttpMethods.PUT.getMethod(), "/deposit", HttpVersion.HTTP_1_1.toString(), header,
+					deposit.toJSON());
+			response = Http.sendHTTPRequestAndGetHttpResponse(request, bankIp.getIp());
 
 		} catch (IOException e) {
 
 			throw new ServerConnectionException();
 
 		}
-		
+
 	}
 
 	private void transferMoney() throws ServerConnectionException {
@@ -273,8 +271,9 @@ public class ClientApp {
 
 				try {
 
-					request = new RequestHttp(HttpMethods.PUT.getMethod(), "/transfer",HttpVersion.HTTP_1_1.toString(), header, transfer.toJSON());
-					response = Http.sendHTTPRequestAndGetHttpResponse(request,bankIp.getIp());
+					request = new RequestHttp(HttpMethods.PUT.getMethod(), "/transfer", HttpVersion.HTTP_1_1.toString(),
+							header, transfer.toJSON());
+					response = Http.sendHTTPRequestAndGetHttpResponse(request, bankIp.getIp());
 
 				} catch (IOException e) {
 
@@ -296,8 +295,8 @@ public class ClientApp {
 
 		try {
 
-			request = new RequestHttp(HttpMethods.GET.getMethod(), "/balance",HttpVersion.HTTP_1_1.toString(), header);
-			response = Http.sendHTTPRequestAndGetHttpResponse(request,bankIp.getIp());
+			request = new RequestHttp(HttpMethods.GET.getMethod(), "/balance", HttpVersion.HTTP_1_1.toString(), header);
+			response = Http.sendHTTPRequestAndGetHttpResponse(request, bankIp.getIp());
 
 		} catch (IOException e) {
 
@@ -306,7 +305,7 @@ public class ClientApp {
 		}
 	}
 
-	public static void main(String[] args) throws IOException, UnableToConnectException, ServerConnectionException {
+	public static void main(String[] args) throws IOException, ServerConnectionException {
 
 		ClientApp appBank = new ClientApp();
 		appBank.execBank();
