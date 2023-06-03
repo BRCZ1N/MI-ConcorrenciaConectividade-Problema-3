@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
+import org.springframework.http.HttpStatus;
+
 import app.exceptions.ServerConnectionException;
 import app.model.AccountModel;
 import app.model.BankModel;
@@ -23,7 +25,7 @@ import io.netty.handler.codec.http.HttpVersion;
 
 public class ClientApp {
 	private boolean connected;
-	private boolean log;
+	private boolean log = true;
 	private boolean pick;
 
 	private Scanner scanner = new Scanner(System.in);
@@ -176,7 +178,7 @@ public class ClientApp {
 
 	}
 
-	private void loginClient() throws IOException {
+	private void loginClient() throws IOException, ServerConnectionException {
 		while (log) {
 			System.out.println("===================================================");
 			System.out.println("========= Central bancaria: ==========");
@@ -188,6 +190,28 @@ public class ClientApp {
 			userLogin = new LoginAccountModel(id, password);
 			operationAccount = new OperationAccountModel(id, bankIp);
 			// fazer requisição e condicionais
+			RequestHttp request;
+			ResponseHttp response;
+			Map<String, String> header = new HashMap<String, String>();
+			header.put("Content-Type", "application/json");
+
+			try {
+
+				request = new RequestHttp(HttpMethods.PUT.getMethod(), "/auth", HttpVersion.HTTP_1_1.toString(), header,
+						userLogin.toJSON());
+				response = Http.sendHTTPRequestAndGetHttpResponse(request, bankIp.getIp());
+
+			} catch (IOException e) {
+
+				throw new ServerConnectionException();
+
+			}
+			if (response.getStatusLine().contains(HttpStatus.OK.getReasonPhrase())) {
+				log = false;
+
+			}
+			System.out.println(response.getBody());
+
 		}
 	}
 
@@ -240,7 +264,11 @@ public class ClientApp {
 
 			throw new ServerConnectionException();
 
+		}if (response.getStatusLine().contains(HttpStatus.OK.getReasonPhrase())) {
+			System.out.println(response.getBody());
+
 		}
+		System.out.println(response.getBody());
 
 	}
 
@@ -280,6 +308,11 @@ public class ClientApp {
 					throw new ServerConnectionException();
 
 				}
+				if (response.getStatusLine().contains(HttpStatus.OK.getReasonPhrase())) {
+					System.out.println(response.getBody());
+
+				}
+				System.out.println(response.getBody());
 			} else {
 				System.out.println("====== Escolha um banco correto ======");
 			}
@@ -302,7 +335,11 @@ public class ClientApp {
 
 			throw new ServerConnectionException();
 
+		}if (response.getStatusLine().contains(HttpStatus.OK.getReasonPhrase())) {
+			System.out.println(response.getBody());
+
 		}
+		System.out.println(response.getBody());
 	}
 
 	public static void main(String[] args) throws IOException, ServerConnectionException {
