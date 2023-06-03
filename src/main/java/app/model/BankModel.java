@@ -12,6 +12,10 @@ public class BankModel {
 		
 	}
 
+	public BankModel() {
+		
+	}
+
 	public String getId() {
 		
 		return id;
