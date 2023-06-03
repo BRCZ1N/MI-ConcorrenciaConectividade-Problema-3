@@ -116,7 +116,7 @@ public class ClientApp {
 	 * @param ipBank
 	 * @throws ServerConnectionException 
 	 */
-	private void z	(BankModel ipBank) throws ServerConnectionException {
+	private void registerUser(BankModel ipBank) throws ServerConnectionException {
 
 		ArrayList<UserModel> beneficiares = new ArrayList<UserModel>();
 		boolean register = true;
