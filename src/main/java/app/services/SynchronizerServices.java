@@ -70,7 +70,8 @@ public class SynchronizerServices {
 
 	}
 
-	public ArrayList<ResponseHttp> requestEnterCriticalRegion(OperationsModel operation) throws ServerConnectionException {
+	public ArrayList<ResponseHttp> requestEnterCriticalRegion(OperationsModel operation)
+			throws ServerConnectionException {
 
 		ArrayList<ResponseHttp> responses = new ArrayList<ResponseHttp>();
 
@@ -88,7 +89,8 @@ public class SynchronizerServices {
 
 			try {
 
-				request = new RequestHttp(HttpMethods.GET.getMethod(), "/synchronizer/reply",HttpVersion.HTTP_1_1.toString(), header);
+				request = new RequestHttp(HttpMethods.GET.getMethod(), "/synchronizer/reply",
+						HttpVersion.HTTP_1_1.toString(), header);
 				response = Http.sendHTTPRequestAndGetHttpResponse(request, bank.getBank().getIp());
 				responses.add(response);
 
@@ -100,9 +102,8 @@ public class SynchronizerServices {
 
 		}
 
-		
 		return responses;
-		
+
 //		if (verifyResponses(responses) && crOperations.getFirst().equals(operation)) {
 //
 //			return true;
@@ -112,19 +113,14 @@ public class SynchronizerServices {
 	}
 
 	public boolean replyMessage(OperationsModel operation) throws UnknownHostException {
-
 		String ip = InetAddress.getLocalHost().getHostAddress();
 
-		if (operation.getAccountOrigin().getBank().getIp().equals(ip) && crOperations.getFirst().equals(operation)) {
-
+		if (operation.getAccountOrigin().getBank().getIp().equals(ip) && crOperations.getFirst().equals(operation)
+				&& operation.getTimeStamp() <= crOperations.getFirst().getTimeStamp()) {
 			return true;
-
 		} else {
-
+			return false;
 		}
-
-		return false;
-
 	}
 
 	public void releaseCR() {
