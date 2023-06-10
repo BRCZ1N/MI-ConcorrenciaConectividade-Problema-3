@@ -72,6 +72,7 @@ public class Http {
 	 */
 	public static ResponseHttp sendHTTPRequestAndGetHttpResponse(RequestHttp requestHttp, String ip) throws IOException  {
 
+//		OkHttpClient client = new OkHttpClient().newBuilder().readTimeout(5,TimeUnit.SECONDS).build();
 		OkHttpClient client = new OkHttpClient();
 		String url = ip + requestHttp.getPath();
 		Request request = new Request.Builder().url(url).method(requestHttp.getMethod(),(requestHttp.getBody() == null ? null : RequestBody.create(requestHttp.getBody().getBytes("UTF-8")))).headers(Headers.of(requestHttp.getHeaders())).build();

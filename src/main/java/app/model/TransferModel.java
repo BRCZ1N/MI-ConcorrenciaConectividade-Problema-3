@@ -7,8 +7,8 @@ public class TransferModel extends OperationsModel {
 
 	private OperationAccountModel accountDestiny;
 
-	public TransferModel(OperationAccountModel accountOrigin, long timeStamp, Double value,OperationAccountModel accountDestiny) {
-		super(accountOrigin, timeStamp, value, OperationType.OP_TRANSFER);
+	public TransferModel(OperationAccountModel accountOrigin, Double value,OperationAccountModel accountDestiny) {
+		super(accountOrigin, value, OperationType.OP_TRANSFER);
 		this.accountDestiny = accountDestiny;
 	}
 	
@@ -31,7 +31,6 @@ public class TransferModel extends OperationsModel {
 		
 		json.put("accountOrigin", super.getAccountOrigin());
 		json.put("accountDestiny", this.accountDestiny);
-		json.put("timeStamp", super.getTimeStamp());
 		json.put("value", super.getValue());
 		json.put("type", super.getType());
 

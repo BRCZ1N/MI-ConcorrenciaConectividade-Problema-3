@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import app.exceptions.InsufficientBalanceException;
 import app.exceptions.ServerConnectionException;
 import app.model.AccountModel;
 import app.model.DepositModel;
@@ -87,88 +88,67 @@ public class AccountController {
 
 	}
 
+
 	@PutMapping("/deposit")
-	public ResponseEntity<String> makeDeposit(@RequestBody DepositModel deposit) {
+	public ResponseEntity<String> makeDeposit(@RequestBody DepositModel deposit) throws ServerConnectionException {
 
-		try {
+		
+		if(serviceSynch.execCriticalRegion(deposit)) {
+			
+			Optional<AccountModel> resultOptional = serviceAccount.depositOperation(deposit);
+			if (resultOptional.isEmpty()) {
 
-			serviceSynch.requestEnterCriticalRegion(deposit);
+				message.setMessage("Erro!! - Conta não encontrada");
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message.toJSON());
 
-			message.setMessage("Sucesso!! - Transferencia efetuada");
+			}
+			
+			message.setMessage("Sucesso!! - Deposito efetuado");
 			return ResponseEntity.status(HttpStatus.OK).body(message.toJSON());
-
-		} catch (ServerConnectionException e) {
-
-			message.setMessage("Erro!! - " + e.getMessage());
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message.toJSON());
+			
+		}else {
+			
+			
+			
+			
 		}
-		return null;
+		
 
 	}
-
+	
 	@PutMapping("/transfer")
 	public ResponseEntity<String> makeTransfer(@RequestBody TransferModel transfer) {
 
-		try {
+		if(serviceSynch.execCriticalRegion(transfer)) {
+			
+			try {
 
-			serviceSynch.requestEnterCriticalRegion(transfer);
+				Optional<AccountModel> resultOptional = serviceAccount.transferOperation(transfer);
+				
+				if(resultOptional.isEmpty()) {
+					
+					message.setMessage("Erro!! - Conta não encontrada");
+					return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message.toJSON());
+					
+				}
+				
+				message.setMessage("Sucesso!! - Transferencia efetuada");
+				return ResponseEntity.status(HttpStatus.OK).body(message.toJSON());
 
-			message.setMessage("Sucesso!! - Transferencia efetuada");
-			return ResponseEntity.status(HttpStatus.OK).body(message.toJSON());
+			} catch (InsufficientBalanceException e) {
 
-		} catch (ServerConnectionException e) {
+				message.setMessage("Erro!! - "+e.getMessage());
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message.toJSON());
 
-			message.setMessage("Erro!! - " + e.getMessage());
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message.toJSON());
+			} catch (ServerConnectionException e) {
+				
+				message.setMessage("Erro!! - "+e.getMessage());
+				return ResponseEntity.status(HttpStatus.GATEWAY_TIMEOUT).body(message.toJSON());
+			}
 
+			
 		}
-
+		
 	}
-
-//	@PutMapping("/deposit")
-//	public ResponseEntity<String> makeDeposit(@RequestBody DepositModel deposit) {
-//
-//		Optional<AccountModel> resultOptional = service.depositOperation(deposit);
-//		if (resultOptional.isEmpty()) {
-//
-//			message.setMessage("Erro!! - Conta não encontrada");
-//			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message.toJSON());
-//
-//		}
-//		
-//		message.setMessage("Sucesso!! - Deposito efetuado");
-//		return ResponseEntity.status(HttpStatus.OK).body(message.toJSON());
-//
-//	}
-//	
-//	@PutMapping("/transfer")
-//	public ResponseEntity<String> makeTransfer(@RequestBody TransferModel transfer) {
-//
-//		try {
-//
-//			Optional<AccountModel> resultOptional = service.transferOperation(transfer);
-//			
-//			if(resultOptional.isEmpty()) {
-//				
-//				message.setMessage("Erro!! - Conta não encontrada");
-//				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message.toJSON());
-//				
-//			}
-//			
-//			message.setMessage("Sucesso!! - Transferencia efetuada");
-//			return ResponseEntity.status(HttpStatus.OK).body(message.toJSON());
-//
-//		} catch (InsufficientBalanceException e) {
-//
-//			message.setMessage("Erro!! - "+e.getMessage());
-//			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message.toJSON());
-//
-//		} catch (ServerConnectionException e) {
-//			
-//			message.setMessage("Erro!! - "+e.getMessage());
-//			return ResponseEntity.status(HttpStatus.GATEWAY_TIMEOUT).body(message.toJSON());
-//		}
-//
-//	}
 
 }
