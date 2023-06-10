@@ -5,7 +5,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+
 import org.springframework.stereotype.Component;
+
 import app.exceptions.InsufficientBalanceException;
 import app.exceptions.ServerConnectionException;
 import app.model.AccountModel;
@@ -57,7 +59,7 @@ public class AccountServices {
 
 	public Optional<AccountModel> depositOperation(DepositModel deposit) {
 
-		Optional<AccountModel> resultSearch = findById(deposit.getAccount().getIdAccount());
+		Optional<AccountModel> resultSearch = findById(deposit.getAccountOrigin().getIdAccount());
 
 		if (resultSearch.isEmpty()) {
 
@@ -123,19 +125,19 @@ public class AccountServices {
 
 				}
 			}
-			
-		}else {
+
+		} else {
 
 			resultSearchAccountOrigin = findById(transfer.getAccountOrigin().getIdAccount());
-			
+
 			if (resultSearchAccountOrigin.isEmpty()) {
 
 				return Optional.empty();
 
 			}
-			
+
 			accountOrigin = resultSearchAccountOrigin.get();
-			
+
 			if (accountOrigin.getBalance() < transfer.getValue()) {
 
 				throw new InsufficientBalanceException();
@@ -174,13 +176,13 @@ public class AccountServices {
 
 	}
 
-
 	public boolean authenticate(LoginAccountModel account) {
 
 		for (Map.Entry<String, AccountModel> entry : accounts.entrySet()) {
 
-			if (entry.getKey().equals(account.getId()) && entry.getValue().getPassword().equals(account.getPassword())) {
+			if (entry.getKey().equals(account.getId())&& entry.getValue().getPassword().equals(account.getPassword())) {
 
+				
 				return true;
 
 			}

@@ -6,44 +6,30 @@ import app.utilities.OperationType;
 
 public class DepositModel extends OperationsModel {
 
-	private OperationAccountModel account;
-	private Double value;
+	public DepositModel(OperationAccountModel accountOrigin, long timeStamp, Double value) {
 
-	public DepositModel(OperationAccountModel account, Double value) {
-
-		super(OperationType.OP_DEPOSIT);
-		this.account = account;
-		this.value = value;
+		super(accountOrigin, timeStamp, value, OperationType.OP_DEPOSIT);
 
 	}
 
-	public OperationAccountModel getAccount() {
-		return account;
-	}
+	public DepositModel(OperationAccountModel accountOrigin, Double value) {
 
-	public void setAccount(OperationAccountModel account) {
-		this.account = account;
-	}
+		super(accountOrigin, value, OperationType.OP_DEPOSIT);
 
-	public Double getValue() {
-		return value;
-	}
-
-	public void setValue(Double value) {
-		this.value = value;
 	}
 
 	public String toJSON() {
 
 		JSONObject json = new JSONObject();
-		
-		json.put("account", this.account);
-		json.put("value", this.value);
-		
+
+		json.put("accountOrigin", super.getAccountOrigin());
+		json.put("timeStamp", super.getTimeStamp());
+		json.put("value", super.getValue());
+		json.put("type", super.getType());
+
 		String jsonFormatMessage = json.toString();
-		
+
 		return jsonFormatMessage;
 
 	}
-
 }

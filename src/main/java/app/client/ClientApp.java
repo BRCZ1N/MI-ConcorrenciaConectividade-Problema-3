@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
+
 import org.springframework.http.HttpStatus;
+
 import app.exceptions.ServerConnectionException;
 import app.model.AccountModel;
 import app.model.BankModel;
