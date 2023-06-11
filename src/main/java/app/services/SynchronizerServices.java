@@ -31,6 +31,7 @@ public class SynchronizerServices {
 	public SynchronizerServices() {
 
 		SynchronizerServices.crOperationsBank = new LinkedList<RequestSynchronObject>();
+		SynchronizerServices.logList = new LinkedList<RequestSynchronObject>();
 
 	}
 
