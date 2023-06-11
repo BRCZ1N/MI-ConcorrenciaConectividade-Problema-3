@@ -1,15 +1,11 @@
 package app.services;
-
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.Optional;
-
 import org.springframework.stereotype.Component;
-
 import app.exceptions.ServerConnectionException;
 import app.model.OperationsModel;
 import app.model.ReplySynchronObject;
@@ -24,25 +20,14 @@ import io.netty.handler.codec.http.HttpVersion;
 @Component
 public class SynchronizerServices {
 
-	private static LinkedList<RequestSynchronObject> crOperationsOtherBanks;
 	private static LinkedList<RequestSynchronObject> crOperationsBank;
-	private RequestSynchronObject currentRequest;
 
 	private static long timeStamp = 0;
 
 	public SynchronizerServices() {
 
-		SynchronizerServices.crOperationsOtherBanks = new LinkedList<RequestSynchronObject>();
 		SynchronizerServices.crOperationsBank = new LinkedList<RequestSynchronObject>();
 
-	}
-
-	public static LinkedList<RequestSynchronObject> getCrOperationsOtherBanks() {
-		return crOperationsOtherBanks;
-	}
-
-	public static void setCrOperationsOtherBanks(LinkedList<RequestSynchronObject> crOperationsOtherBanks) {
-		SynchronizerServices.crOperationsOtherBanks = crOperationsOtherBanks;
 	}
 
 	public static LinkedList<RequestSynchronObject> getCrOperationsBank() {
@@ -53,43 +38,12 @@ public class SynchronizerServices {
 		SynchronizerServices.crOperationsBank = crOperationsBank;
 	}
 
-	public RequestSynchronObject getCurrentRequest() {
-		return currentRequest;
-	}
-
-	public void setCurrentRequest(RequestSynchronObject currentRequest) {
-		this.currentRequest = currentRequest;
-	}
-
 	public static long getTimeStamp() {
 		return timeStamp;
 	}
 
 	public static void setTimeStamp(long timeStamp) {
 		SynchronizerServices.timeStamp = timeStamp;
-	}
-
-	public void addRequestOtherBanks(RequestSynchronObject synch) {
-
-		if (crOperationsOtherBanks.isEmpty()) {
-
-			crOperationsOtherBanks.add(synch);
-
-		} else {
-
-			int range = 0;
-
-			while (range < crOperationsOtherBanks.size()
-					&& crOperationsOtherBanks.get(range).getTimeStamp() > synch.getTimeStamp()) {
-
-				range++;
-
-			}
-
-			crOperationsOtherBanks.add(synch);
-
-		}
-
 	}
 
 	public void addRequestBank(RequestSynchronObject synch) {
@@ -172,22 +126,6 @@ public class SynchronizerServices {
 		}
 
 		return message;
-
-	}
-
-	public Optional<RequestSynchronObject> findByOperation(OperationsModel operation) {
-
-		for (RequestSynchronObject object : crOperationsOtherBanks) {
-
-			if (object.getOperation().equals(object.getOperation())) {
-
-				return Optional.of(object);
-
-			}
-
-		}
-
-		return Optional.empty();
 
 	}
 
