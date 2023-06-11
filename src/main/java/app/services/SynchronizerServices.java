@@ -1,10 +1,13 @@
 package app.services;
+
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Optional;
+import com.google.gson.Gson;
 import org.springframework.stereotype.Component;
 import app.exceptions.ServerConnectionException;
 import app.model.OperationsModel;
@@ -21,6 +24,7 @@ import io.netty.handler.codec.http.HttpVersion;
 public class SynchronizerServices {
 
 	private static LinkedList<RequestSynchronObject> crOperationsBank;
+	private static LinkedList<RequestSynchronObject> logList;
 
 	private static long timeStamp = 0;
 
@@ -69,12 +73,37 @@ public class SynchronizerServices {
 
 	}
 
-	public ArrayList<ResponseHttp> requestEnterCriticalRegion(OperationsModel operation) throws ServerConnectionException {
+	public void exitCriticalRegion(OperationsModel operation) {
+		
+		RequestSynchronObject request = findByOperation(operation).get();
+		crOperationsBank.remove(request);
+		logList.add(request);
+		
+	}
+
+	public Optional<RequestSynchronObject> findByOperation(OperationsModel operation) {
+
+		for (RequestSynchronObject request : crOperationsBank) {
+
+			if (request.getOperation().equals(operation)) {
+
+				return Optional.of(request);
+
+			}
+
+		}
+		
+		return Optional.empty();
+
+	}
+
+	public ArrayList<ResponseHttp> enterCriticalRegion(OperationsModel operation) throws ServerConnectionException {
 
 		ArrayList<ResponseHttp> responses = new ArrayList<ResponseHttp>();
 
 		RequestHttp request;
 		RequestSynchronObject synchObject;
+		Gson gson = new Gson();
 
 		Map<String, String> header = new HashMap<String, String>();
 		header.put("Content-Type", "application/json");
@@ -89,21 +118,23 @@ public class SynchronizerServices {
 			new Thread(() -> {
 
 				try {
-					
+
 					ResponseHttp response = Http.sendHTTPRequestAndGetHttpResponse(request, bank.getBank().getIp());
+					ReplySynchronObject resp = gson.fromJson(request.getBody(), ReplySynchronObject.class);
+					timeStamp = Math.max(timeStamp, resp.getCurrentTimeStamp()) +1;
 					responses.add(response);
-					
+
 				} catch (IOException e) {
-					
+
 					e.printStackTrace();
-					
+
 				}
 
 			}).start();
 
 		}
-		
-		while(responses.toArray().length != BanksEnum.values().length);
+
+		while (responses.toArray().length != BanksEnum.values().length);
 
 		return responses;
 

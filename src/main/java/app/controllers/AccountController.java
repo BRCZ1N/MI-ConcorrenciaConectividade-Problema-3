@@ -102,21 +102,24 @@ public class AccountController {
 
 		try {
 			
-			serviceSynch.requestEnterCriticalRegion(deposit);
+			serviceSynch.enterCriticalRegion(deposit);
 			Optional<AccountModel> resultOptional = serviceAccount.depositOperation(deposit);
 			if (resultOptional.isEmpty()) {
 
 				message.setMessage("Erro!! - Conta não encontrada");
+				serviceSynch.exitCriticalRegion(deposit);
 				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message.toJSON());
 
 			}
 
 			message.setMessage("Sucesso!! - Deposito efetuado");
+			serviceSynch.exitCriticalRegion(deposit);
 			return ResponseEntity.status(HttpStatus.OK).body(message.toJSON());
 			
 		} catch (ServerConnectionException e) {
 			
 			message.setMessage("Erro!! - " + e.getMessage());
+			serviceSynch.exitCriticalRegion(deposit);
 			return ResponseEntity.status(HttpStatus.GATEWAY_TIMEOUT).body(message.toJSON());
 		}
 
@@ -127,27 +130,31 @@ public class AccountController {
 
 		try {
 
-			serviceSynch.requestEnterCriticalRegion(transfer);
+			serviceSynch.enterCriticalRegion(transfer);
 			Optional<AccountModel> resultOptional = serviceAccount.transferOperation(transfer);
 
 			if (resultOptional.isEmpty()) {
 
 				message.setMessage("Erro!! - Conta não encontrada");
+				serviceSynch.exitCriticalRegion(transfer);
 				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message.toJSON());
 
 			}
 
 			message.setMessage("Sucesso!! - Transferencia efetuada");
+			serviceSynch.exitCriticalRegion(transfer);
 			return ResponseEntity.status(HttpStatus.OK).body(message.toJSON());
 
 		} catch (InsufficientBalanceException e) {
 
 			message.setMessage("Erro!! - " + e.getMessage());
+			serviceSynch.exitCriticalRegion(transfer);
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message.toJSON());
 
 		} catch (ServerConnectionException e) {
 
 			message.setMessage("Erro!! - " + e.getMessage());
+			serviceSynch.exitCriticalRegion(transfer);
 			return ResponseEntity.status(HttpStatus.GATEWAY_TIMEOUT).body(message.toJSON());
 		}
 
