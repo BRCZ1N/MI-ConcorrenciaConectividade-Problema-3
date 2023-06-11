@@ -1,5 +1,7 @@
 package app.model;
 
+import org.json.JSONObject;
+
 public class ReplySynchronObject {
 
 	private long currentTimeStamp;
@@ -16,6 +18,18 @@ public class ReplySynchronObject {
 
 	public void setCurrentTimeStamp(long currentTimeStamp) {
 		this.currentTimeStamp = currentTimeStamp;
+	}
+	
+	public String toJSON() {
+
+		JSONObject json = new JSONObject();
+
+		json.put("currentTimeStamp", this.currentTimeStamp);
+
+		String jsonFormatMessage = json.toString();
+
+		return jsonFormatMessage;
+
 	}
 
 }

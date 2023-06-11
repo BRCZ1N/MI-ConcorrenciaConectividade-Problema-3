@@ -8,7 +8,6 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Optional;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import app.exceptions.ServerConnectionException;
@@ -25,7 +24,7 @@ import io.netty.handler.codec.http.HttpVersion;
 @Component
 public class SynchronizerServices {
 
-	private static LinkedList<RequestSynchronObject> crOperationsAll;
+	private static LinkedList<RequestSynchronObject> crOperationsOtherBanks;
 	private static LinkedList<RequestSynchronObject> crOperationsBank;
 	private RequestSynchronObject currentRequest;
 
@@ -33,17 +32,33 @@ public class SynchronizerServices {
 
 	public SynchronizerServices() {
 
-		SynchronizerServices.crOperationsAll = new LinkedList<RequestSynchronObject>();
+		SynchronizerServices.crOperationsOtherBanks = new LinkedList<RequestSynchronObject>();
 		SynchronizerServices.crOperationsBank = new LinkedList<RequestSynchronObject>();
 
 	}
 
-	public static LinkedList<RequestSynchronObject> getCrOperations() {
-		return crOperationsAll;
+	public static LinkedList<RequestSynchronObject> getCrOperationsOtherBanks() {
+		return crOperationsOtherBanks;
 	}
 
-	public static void setCrOperations(LinkedList<RequestSynchronObject> crOperations) {
-		SynchronizerServices.crOperationsAll = crOperations;
+	public static void setCrOperationsOtherBanks(LinkedList<RequestSynchronObject> crOperationsOtherBanks) {
+		SynchronizerServices.crOperationsOtherBanks = crOperationsOtherBanks;
+	}
+
+	public static LinkedList<RequestSynchronObject> getCrOperationsBank() {
+		return crOperationsBank;
+	}
+
+	public static void setCrOperationsBank(LinkedList<RequestSynchronObject> crOperationsBank) {
+		SynchronizerServices.crOperationsBank = crOperationsBank;
+	}
+
+	public RequestSynchronObject getCurrentRequest() {
+		return currentRequest;
+	}
+
+	public void setCurrentRequest(RequestSynchronObject currentRequest) {
+		this.currentRequest = currentRequest;
 	}
 
 	public static long getTimeStamp() {
@@ -54,23 +69,24 @@ public class SynchronizerServices {
 		SynchronizerServices.timeStamp = timeStamp;
 	}
 
-	public void addRequestAll(RequestSynchronObject synch) {
+	public void addRequestOtherBanks(RequestSynchronObject synch) {
 
-		if (crOperationsAll.isEmpty()) {
+		if (crOperationsOtherBanks.isEmpty()) {
 
-			crOperationsAll.add(synch);
+			crOperationsOtherBanks.add(synch);
 
 		} else {
 
 			int range = 0;
 
-			while (range < crOperationsAll.size() && crOperationsAll.get(range).getTimeStamp() > synch.getTimeStamp()) {
+			while (range < crOperationsOtherBanks.size()
+					&& crOperationsOtherBanks.get(range).getTimeStamp() > synch.getTimeStamp()) {
 
 				range++;
 
 			}
 
-			crOperationsAll.add(synch);
+			crOperationsOtherBanks.add(synch);
 
 		}
 
@@ -99,61 +115,41 @@ public class SynchronizerServices {
 
 	}
 
-	public boolean execCriticalRegion(OperationsModel operation) throws ServerConnectionException {
-
-		ArrayList<ResponseHttp> requests = requestEnterCriticalRegion(operation);
-		if (verifyResponses(requests) && requests.toArray().length == BanksEnum.values().length) {
-
-			return true;
-
-		}
-		
-		return false;
-
-
-	}
-
 	public ArrayList<ResponseHttp> requestEnterCriticalRegion(OperationsModel operation) throws ServerConnectionException {
 
 		ArrayList<ResponseHttp> responses = new ArrayList<ResponseHttp>();
 
 		RequestHttp request;
-		ResponseHttp response;
-		Optional<RequestSynchronObject> resultSearch;
 		RequestSynchronObject synchObject;
 
 		Map<String, String> header = new HashMap<String, String>();
 		header.put("Content-Type", "application/json");
 
-		resultSearch = findByOperation(operation);
-		if (findByOperation(operation).isEmpty()) {
-
-			timeStamp++;
-			synchObject = new RequestSynchronObject(timeStamp, operation);
-			addRequestAll(synchObject);
-			addRequestBank(synchObject);
-
-		} else {
-
-			synchObject = resultSearch.get();
-
-		}
+		timeStamp++;
+		synchObject = new RequestSynchronObject(timeStamp, operation);
+		addRequestBank(synchObject);
+		request = new RequestHttp(HttpMethods.GET.getMethod(), "/account/reply", HttpVersion.HTTP_1_1.toString(),header, synchObject.toJSON());
 
 		for (BanksEnum bank : BanksEnum.values()) {
 
-			try {
+			new Thread(() -> {
 
-				request = new RequestHttp(HttpMethods.GET.getMethod(), "/account/reply",HttpVersion.HTTP_1_1.toString(), header, synchObject.toJSON());
-				response = Http.sendHTTPRequestAndGetHttpResponse(request, bank.getBank().getIp());
-				responses.add(response);
+				try {
+					
+					ResponseHttp response = Http.sendHTTPRequestAndGetHttpResponse(request, bank.getBank().getIp());
+					responses.add(response);
+					
+				} catch (IOException e) {
+					
+					e.printStackTrace();
+					
+				}
 
-			} catch (IOException e) {
-
-				throw new ServerConnectionException();
-
-			}
+			}).start();
 
 		}
+		
+		while(responses.toArray().length != BanksEnum.values().length);
 
 		return responses;
 
@@ -161,92 +157,27 @@ public class SynchronizerServices {
 
 	public ReplySynchronObject replyMessage(RequestSynchronObject synch) throws UnknownHostException {
 
-		boolean wait = true;
+		boolean replyDeferred = true;
 		ReplySynchronObject message = null;
-		
-		while(wait) {
-			
-			if ((!synch.getOperation().getAccountOrigin().equals(crOperationsBank.getFirst().getOperation().getAccountOrigin())) || (synch.getOperation().getAccountOrigin().equals(crOperationsBank.getFirst().getOperation().getAccountOrigin()) && crOperationsBank.getFirst().getTimeStamp() > synch.getTimeStamp())) {
+
+		while (replyDeferred) {
+
+			if ((!synch.getOperation().getAccountOrigin().equals(crOperationsBank.getFirst().getOperation().getAccountOrigin()))|| (synch.getOperation().getAccountOrigin().equals(crOperationsBank.getFirst().getOperation().getAccountOrigin())&& crOperationsBank.getFirst().getTimeStamp() > synch.getTimeStamp())) {
 
 				message = new ReplySynchronObject(timeStamp);
-				wait = false;
-				
-			} 
-			
-		}
-		
-		return message;
-		
-	
-
-//		if(timeStamp > synch.getTimeStamp() &&  ) {
-//			
-//			
-//			ReplySynchronObject message = new ReplySynchronObject(timeStamp);
-//			
-//			return message;
-//			
-//		}else if() {
-//			
-//			
-//			
-//		}else if() {
-//			
-//			
-//			
-//		}
-//		
-//		String ip = InetAddress.getLocalHost().getHostAddress();
-//
-//		if (synch.getOperation().getAccountOrigin().getBank().getIp().equals(ip) && crOperations.getFirst().equals(operation)&& operation.getTimeStamp() <= crOperations.getFirst().getTimeStamp()) {
-//
-//			return true;
-//
-//		} else {
-//
-//			return false;
-//
-//		}
-	}
-
-	public void releaseCR() {
-
-	}
-
-//	public Optional<OperationsModel> findCROperation() {
-//		
-//		for(OperationsModel operation:crOperations) {
-//			
-//			if(operation.getAccountOrigin().equals(operation.get) {
-//				
-//				
-//				
-//			}
-//			
-//		}
-//		
-//		
-//	}
-
-	public boolean verifyResponses(ArrayList<ResponseHttp> responses) {
-
-		for (ResponseHttp response : responses) {
-
-			if (!response.getStatusLine().equals(HttpStatus.OK.getReasonPhrase())) {
-
-				return false;
+				replyDeferred = false;
 
 			}
 
 		}
 
-		return true;
+		return message;
 
 	}
 
 	public Optional<RequestSynchronObject> findByOperation(OperationsModel operation) {
 
-		for (RequestSynchronObject object : crOperationsAll) {
+		for (RequestSynchronObject object : crOperationsOtherBanks) {
 
 			if (object.getOperation().equals(object.getOperation())) {
 
