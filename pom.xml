@@ -13,11 +13,7 @@
 	<artifactId>MI-ConcorrenciaConectividade-Problema-3</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>MI-ConcorrenciaConectividade-Problema-3</name>
-	<description>Projeto equivalente ao terceiro problema do MI de concorrência
-		e conectividade</description>
-	<properties>
-		<java.version>20</java.version>
-	</properties>
+	<description>Projeto equivalente ao terceiro problema do MI de concorrência e conectividade</description>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
