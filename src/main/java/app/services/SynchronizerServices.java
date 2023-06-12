@@ -7,10 +7,12 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Optional;
-import com.google.gson.Gson;
 
 import org.apache.http.HttpVersion;
 import org.springframework.stereotype.Component;
+
+import com.google.gson.Gson;
+
 import app.exceptions.ServerConnectionException;
 import app.model.OperationsModel;
 import app.model.ReplySynchronObject;
