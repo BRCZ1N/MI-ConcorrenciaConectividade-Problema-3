@@ -100,7 +100,7 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>bank</id>
+						<id>repackage</id>
 						<configuration>
 							<mainClass>${BankApp}</mainClass>
 							<outputDirectory>
