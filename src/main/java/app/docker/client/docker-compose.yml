@@ -9,12 +9,12 @@ services:
       image: brcz1n/client-bank-app-tec502
       tty: true
       stdin_open: true
-      container_name: client-bank-app-tec502
+      container_name: client-bank-app-2
    app-client-3:
       image: brcz1n/client-bank-app-tec502
       tty: true
       stdin_open: true
-      container_name: client-car-bank-tec502
+      container_name: client-car-bank-3
       
       
 

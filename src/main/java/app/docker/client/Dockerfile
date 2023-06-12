@@ -1,5 +1,5 @@
 FROM openjdk:latest
-WORKDIR /ClientBank
-COPY ClientBank-jar-with-dependencies.jar /car
+WORKDIR /client
+COPY ClientBank-jar-with-dependencies.jar /client
 CMD ["java", "-jar" , "ClientBank-jar-with-dependencies.jar"]
 
