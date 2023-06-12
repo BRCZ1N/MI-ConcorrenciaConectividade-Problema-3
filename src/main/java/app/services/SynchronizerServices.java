@@ -8,6 +8,8 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Optional;
 import com.google.gson.Gson;
+
+import org.apache.http.HttpVersion;
 import org.springframework.stereotype.Component;
 import app.exceptions.ServerConnectionException;
 import app.model.OperationsModel;
@@ -18,7 +20,7 @@ import app.utilities.Http;
 import app.utilities.HttpMethods;
 import app.utilities.RequestHttp;
 import app.utilities.ResponseHttp;
-import io.netty.handler.codec.http.HttpVersion;
+
 
 @Component
 public class SynchronizerServices {

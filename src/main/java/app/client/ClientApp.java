@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
+import org.apache.http.HttpVersion;
 import org.springframework.http.HttpStatus;
 
 import app.exceptions.ServerConnectionException;
@@ -21,7 +22,6 @@ import app.utilities.Http;
 import app.utilities.HttpMethods;
 import app.utilities.RequestHttp;
 import app.utilities.ResponseHttp;
-import io.netty.handler.codec.http.HttpVersion;
 
 public class ClientApp {
 

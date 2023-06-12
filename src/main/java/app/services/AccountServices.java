@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.http.HttpVersion;
 import org.springframework.stereotype.Component;
 
 import app.exceptions.InsufficientBalanceException;
@@ -19,7 +20,6 @@ import app.utilities.HttpCodes;
 import app.utilities.HttpMethods;
 import app.utilities.RequestHttp;
 import app.utilities.ResponseHttp;
-import io.netty.handler.codec.http.HttpVersion;
 
 @Component
 public class AccountServices {
