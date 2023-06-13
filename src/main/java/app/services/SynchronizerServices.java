@@ -206,6 +206,8 @@ public class SynchronizerServices {
 			//Se não está presente na lista de regiões crítica ativas e se estiver na lista de requisições e o timeStamp do servidor que recebeu a request for menor 
 			//Se não está presente na lista de regiões crítica ativas e se estiver na lista de requisições e o timeStamp do servidor que recebeu a request for igual e o id do banco for menor
 			
+			//Obs:Criterio de desempate pelo ID do banco, nenhum banco terá o mesmo ID.
+			
 			if ((resultSearchActiveList.isEmpty() && resultSearchRequestList.isEmpty()) || (resultSearchActiveList.isEmpty() && !resultSearchRequestList.isEmpty() 
 				&& resultSearchRequestList.get().getTimeStamp() > synch.getTimeStamp()) || (resultSearchActiveList.isEmpty() && !resultSearchRequestList.isEmpty() 
 				&& resultSearchRequestList.get().getTimeStamp() == synch.getTimeStamp() && resultSearchRequestList.get().getOperation().getAccountOrigin().getBank().getId() > synch.getOperation().getAccountOrigin().getBank().getId())) {
