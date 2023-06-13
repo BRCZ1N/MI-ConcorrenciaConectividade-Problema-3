@@ -9,7 +9,7 @@ public class ServerConnectionException extends Exception {
 
 	public ServerConnectionException() {
 		
-		super("A conexão com o outro banco falhou, tente novamente");
+		super("A conexão falhou, tente novamente");
 
 	}
 

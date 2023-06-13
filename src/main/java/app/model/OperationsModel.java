@@ -1,5 +1,7 @@
 package app.model;
 
+import org.json.JSONObject;
+
 import app.utilities.OperationType;
 
 public class OperationsModel {
@@ -13,31 +15,31 @@ public class OperationsModel {
 		this.accountOrigin = accountOrigin;
 		this.value = value;
 		this.type = type;
-		
+
 	}
-	
+
 	public OperationAccountModel getAccountOrigin() {
-		
+
 		return accountOrigin;
-		
+
 	}
 
 	public void setAccountOrigin(OperationAccountModel accountOrigin) {
-		
+
 		this.accountOrigin = accountOrigin;
-		
+
 	}
 
 	public Double getValue() {
-		
+
 		return value;
-		
+
 	}
 
 	public void setValue(Double value) {
-		
+
 		this.value = value;
-		
+
 	}
 
 	public OperationType getType() {
@@ -49,6 +51,21 @@ public class OperationsModel {
 	public void setType(OperationType type) {
 
 		this.type = type;
+
+	}
+
+	@Override
+	public String toString() {
+
+		JSONObject json = new JSONObject();
+
+		json.put("accountOrigin", this.accountOrigin.toString());
+		json.put("value", this.value);
+		json.put("type", this.type);
+
+		String jsonFormatMessage = json.toString();
+
+		return jsonFormatMessage;
 
 	}
 

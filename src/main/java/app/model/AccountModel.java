@@ -1,9 +1,6 @@
 package app.model;
 
 import java.util.ArrayList;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-
 import org.json.JSONObject;
 
 public class AccountModel {
@@ -13,7 +10,6 @@ public class AccountModel {
 	private String password;
 	private Double balance;
 	private BankModel bank;
-	private BlockingQueue<OperationsModel> queueOperations;
 
 	public AccountModel() {
 
@@ -24,7 +20,6 @@ public class AccountModel {
 		this.password = password;
 		this.bank = bank;
 		this.beneficiares = beneficiares;
-		this.queueOperations = new LinkedBlockingQueue<>();
 
 	}
 
@@ -99,20 +94,6 @@ public class AccountModel {
 
 		return jsonFormatMessage;
 
-	}
-
-	public BlockingQueue<OperationsModel> getQueueOperations() {
-		return queueOperations;
-	}
-
-	public void setQueueOperations(BlockingQueue<OperationsModel> queueOperations) {
-		this.queueOperations = queueOperations;
-	}
-
-	public void queueAddElement(OperationsModel operation) {
-		
-		this.queueOperations.add(operation);
-		
 	}
 
 }

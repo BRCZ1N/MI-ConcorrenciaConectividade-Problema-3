@@ -12,11 +12,12 @@ public class DepositModel extends OperationsModel {
 
 	}
 
-	public String toJSON() {
+	@Override
+	public String toString() {
 
 		JSONObject json = new JSONObject();
 
-		json.put("accountOrigin", super.getAccountOrigin());
+		json.put("accountOrigin", super.getAccountOrigin().toString());
 		json.put("value", super.getValue());
 		json.put("type", super.getType());
 

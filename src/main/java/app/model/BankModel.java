@@ -1,5 +1,7 @@
 package app.model;
 
+import org.json.JSONObject;
+
 public class BankModel {
 
 	private String id;
@@ -38,6 +40,19 @@ public class BankModel {
 		
 		this.ip = ip;
 		
+	}
+	
+	public String toString() {
+		
+		JSONObject json = new JSONObject();
+		
+		json.put("id", this.id);
+		json.put("ip", this.ip);
+		
+		String jsonFormatMessage = json.toString();
+
+		return jsonFormatMessage;
+
 	}
 
 }

@@ -160,7 +160,7 @@ public class ClientApp {
 					}
 
 				} catch (NumberFormatException e) {
-
+					
 					System.out.println("A quantidade foi digitada incorretamente");
 
 				}
@@ -193,6 +193,7 @@ public class ClientApp {
 			try {
 
 				request = new RequestHttp(HttpMethods.POST.getMethod(), "/account/create",HttpVersion.HTTP_1_1.toString(), header, user.toJSON());
+				System.out.println(request);
 				response = Http.sendHTTPRequestAndGetHttpResponse(request, bankCurrent.getIp());
 
 			} catch (IOException e) {
@@ -313,7 +314,7 @@ public class ClientApp {
 
 		try {
 
-			request = new RequestHttp(HttpMethods.POST.getMethod(), "/deposit", HttpVersion.HTTP_1_1.toString(), header,deposit.toJSON());
+			request = new RequestHttp(HttpMethods.POST.getMethod(), "/deposit", HttpVersion.HTTP_1_1.toString(), header,deposit.toString());
 			response = Http.sendHTTPRequestAndGetHttpResponse(request, bankCurrent.getIp());
 
 		} catch (IOException e) {
@@ -351,8 +352,7 @@ public class ClientApp {
 
 		try {
 
-			request = new RequestHttp(HttpMethods.POST.getMethod(), "/transfer", HttpVersion.HTTP_1_1.toString(), header,
-					transfer.toJSON());
+			request = new RequestHttp(HttpMethods.POST.getMethod(), "/transfer", HttpVersion.HTTP_1_1.toString(), header,transfer.toString());
 			response = Http.sendHTTPRequestAndGetHttpResponse(request, bankCurrent.getIp());
 
 		} catch (IOException e) {

@@ -2,7 +2,7 @@ package app.model;
 
 import org.json.JSONObject;
 
-public class RequestSynchronObject {
+public class RequestSynchronObject{
 
 	private long timeStamp;
 	private OperationsModel operation;
@@ -34,7 +34,7 @@ public class RequestSynchronObject {
 		JSONObject json = new JSONObject();
 
 		json.put("timeStamp", this.timeStamp);
-		json.put("operation", this.operation);
+		json.put("operation", this.operation.toString());
 
 		String jsonFormatMessage = json.toString();
 
