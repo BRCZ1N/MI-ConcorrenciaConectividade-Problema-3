@@ -182,8 +182,7 @@ public class SynchronizerServices {
 
 		}
 
-		while (responses.toArray().length != BanksEnum.values().length)
-			;
+		while (responses.toArray().length != BanksEnum.values().length);
 
 		requestCrOperationsBank.remove(synchObject);
 		addCrRegionsBank(synchObject);
