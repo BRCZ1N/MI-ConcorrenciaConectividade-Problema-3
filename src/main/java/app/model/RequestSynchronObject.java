@@ -2,68 +2,38 @@ package app.model;
 
 import com.google.gson.Gson;
 
-/**
- * Classe que representa um objeto de solicitação de sincronização.
- */
-public class RequestSynchronObject {
+public class RequestSynchronObject{
 
-    private long timeStamp;
-    private OperationsModel operation;
+	private long timeStamp;
+	private OperationsModel operation;
 
-    /**
-     * Construtor da classe RequestSynchronObject.
-     *
-     * @param timeStamp O timestamp da solicitação.
-     * @param operation O objeto de operações associado à solicitação.
-     */
-    public RequestSynchronObject(long timeStamp, OperationsModel operation) {
-        this.timeStamp = timeStamp;
-        this.operation = operation;
-    }
+	public RequestSynchronObject(long timeStamp, OperationsModel operation) {
 
-    /**
-     * Retorna o timestamp da solicitação.
-     *
-     * @return O timestamp da solicitação.
-     */
-    public long getTimeStamp() {
-        return timeStamp;
-    }
+		this.timeStamp = timeStamp;
+		this.operation = operation;
+	}
 
-    /**
-     * Define o timestamp da solicitação.
-     *
-     * @param timeStamp O timestamp da solicitação.
-     */
-    public void setTimeStamp(long timeStamp) {
-        this.timeStamp = timeStamp;
-    }
+	public long getTimeStamp() {
+		return timeStamp;
+	}
 
-    /**
-     * Retorna o objeto de operações associado à solicitação.
-     *
-     * @return O objeto de operações associado à solicitação.
-     */
-    public OperationsModel getOperation() {
-        return operation;
-    }
+	public void setTimeStamp(long timeStamp) {
+		this.timeStamp = timeStamp;
+	}
 
-    /**
-     * Define o objeto de operações associado à solicitação.
-     *
-     * @param operation O objeto de operações associado à solicitação.
-     */
-    public void setOperation(OperationsModel operation) {
-        this.operation = operation;
-    }
+	public OperationsModel getOperation() {
+		return operation;
+	}
 
-    /**
-     * Converte o objeto RequestSynchronObject em uma representação JSON.
-     *
-     * @return Uma string JSON que representa o objeto RequestSynchronObject.
-     */
-    public String toJSON() {
-        Gson gson = new Gson();
-        return gson.toJson(this);
-    }
+	public void setOperation(OperationsModel operation) {
+		this.operation = operation;
+	}
+	
+	public String toJSON() {
+
+		Gson gson = new Gson();
+		return gson.toJson(this);
+
+	}
+
 }
