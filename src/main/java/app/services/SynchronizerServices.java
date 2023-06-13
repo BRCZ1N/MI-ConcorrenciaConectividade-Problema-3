@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Optional;
 
@@ -23,27 +22,28 @@ import app.utilities.HttpMethods;
 import app.utilities.RequestHttp;
 import app.utilities.ResponseHttp;
 
-
+import java.util.concurrent.CopyOnWriteArrayList;
 @Component
 public class SynchronizerServices {
 
-	private static LinkedList<RequestSynchronObject> crOperationsBank;
-	private static LinkedList<RequestSynchronObject> logList;
-
+	private static CopyOnWriteArrayList<RequestSynchronObject> crOperationsBank;
+	private static CopyOnWriteArrayList<RequestSynchronObject> logList;
+	
+	// olhar a biblioteca java.util.concurrent, pode servir na criação de listas para cenarios de concorrencia 
 	private static long timeStamp = 0;
 
 	public SynchronizerServices() {
 
-		SynchronizerServices.crOperationsBank = new LinkedList<RequestSynchronObject>();
-		SynchronizerServices.logList = new LinkedList<RequestSynchronObject>();
+		SynchronizerServices.crOperationsBank = new CopyOnWriteArrayList<RequestSynchronObject>();
+		SynchronizerServices.logList = new CopyOnWriteArrayList<RequestSynchronObject>();
 
 	}
 
-	public static LinkedList<RequestSynchronObject> getCrOperationsBank() {
+	public static CopyOnWriteArrayList<RequestSynchronObject> getCrOperationsBank() {
 		return crOperationsBank;
 	}
 
-	public static void setCrOperationsBank(LinkedList<RequestSynchronObject> crOperationsBank) {
+	public static void setCrOperationsBank(CopyOnWriteArrayList<RequestSynchronObject> crOperationsBank) {
 		SynchronizerServices.crOperationsBank = crOperationsBank;
 	}
 
@@ -146,23 +146,29 @@ public class SynchronizerServices {
 	}
 
 	public ReplySynchronObject replyMessage(RequestSynchronObject synch) throws UnknownHostException {
+	    boolean replyDeferred = true;
+	    ReplySynchronObject message = null;
 
-		boolean replyDeferred = true;
-		ReplySynchronObject message = null;
+	    long initialTime = System.currentTimeMillis();
+	    long timeout = 11000; 
 
-		while (replyDeferred) {
+	    while (replyDeferred && (System.currentTimeMillis() - initialTime) < timeout) {
+	        if ((!synch.getOperation().getAccountOrigin().equals(crOperationsBank.get(0).getOperation().getAccountOrigin())) ||
+	                (synch.getOperation().getAccountOrigin().equals(crOperationsBank.get(0).getOperation().getAccountOrigin()) &&
+	                        crOperationsBank.get(0).getTimeStamp() > synch.getTimeStamp())) {
+	            message = new ReplySynchronObject(timeStamp);
+	            replyDeferred = false;
+	        }
+	    }
 
-			if ((!synch.getOperation().getAccountOrigin().equals(crOperationsBank.getFirst().getOperation().getAccountOrigin()))|| (synch.getOperation().getAccountOrigin().equals(crOperationsBank.getFirst().getOperation().getAccountOrigin())&& crOperationsBank.getFirst().getTimeStamp() > synch.getTimeStamp())) {
+	    if (replyDeferred) {
+	  
+	        throw new RuntimeException("Tempo limite atingido ao aguardar a resposta.");
+	      //serve pra caso demore muito, não lembro o tempo que precisa por no timeout
+	    }
 
-				message = new ReplySynchronObject(timeStamp);
-				replyDeferred = false;
-
-			}
-
-		}
-
-		return message;
-
+	    return message;
 	}
+
 
 }
