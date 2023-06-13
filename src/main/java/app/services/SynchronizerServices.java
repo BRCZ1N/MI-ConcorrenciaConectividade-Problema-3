@@ -30,7 +30,6 @@ public class SynchronizerServices {
 	private CopyOnWriteArrayList<RequestSynchronObject> requestCrOperationsBank;
 	private CopyOnWriteArrayList<RequestSynchronObject> logList;
 	private CopyOnWriteArrayList<RequestSynchronObject> activeCrOperationsBank;
-
 	private AtomicLong timeStamp;
 
 	public SynchronizerServices() {
@@ -145,13 +144,12 @@ public class SynchronizerServices {
 
 	}
 
-	public ArrayList<ResponseHttp> requestMessage(OperationsModel operation) throws ServerConnectionException {
+	public void requestMessage(OperationsModel operation) throws ServerConnectionException {
 
 		ArrayList<ResponseHttp> responses = new ArrayList<ResponseHttp>();
 
 		RequestHttp request;
 		RequestSynchronObject synchObject;
-		Gson gson = new Gson();
 
 		Map<String, String> header = new HashMap<String, String>();
 		header.put("Content-Type", "application/json");
@@ -168,8 +166,6 @@ public class SynchronizerServices {
 				try {
 
 					ResponseHttp response = Http.sendHTTPRequestAndGetHttpResponse(request, bank.getBank().getIp());
-					ReplySynchronObject resp = gson.fromJson(request.getBody(), ReplySynchronObject.class);
-					timeStamp.set(Math.max(timeStamp.get(), resp.getCurrentTimeStamp()) + 1);
 					responses.add(response);
 
 				} catch (IOException e) {
@@ -184,10 +180,9 @@ public class SynchronizerServices {
 
 		while (responses.toArray().length != BanksEnum.values().length);
 
+		releaseTimeStamp(responses);
 		requestCrOperationsBank.remove(synchObject);
 		addCrRegionsBank(synchObject);
-
-		return responses;
 
 	}
 
@@ -236,6 +231,18 @@ public class SynchronizerServices {
 
 		return Optional.empty();
 
+	}
+	
+	public void releaseTimeStamp(ArrayList<ResponseHttp> responses) {
+		
+		for(ResponseHttp response: responses) {
+			
+			Gson gson = new Gson();
+			ReplySynchronObject resp = gson.fromJson(response.getBody(), ReplySynchronObject.class);
+			timeStamp.set(Math.max(timeStamp.get(), resp.getCurrentTimeStamp()) + 1);
+			
+		}
+		
 	}
 
 }
