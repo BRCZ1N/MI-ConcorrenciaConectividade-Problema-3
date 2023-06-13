@@ -29,7 +29,6 @@ public class ClientApp {
 	private Scanner scanner = new Scanner(System.in);
 	private BankModel bankCurrent;
 	private AccountModel user;
-	private TransferModel transfer;
 	private OperationAccountModel operationAccount;
 	private LoginAccountModel userLogin;
 	private UserModel beneficiareUser;
@@ -322,7 +321,7 @@ public class ClientApp {
 
 		try {
 
-			request = new RequestHttp(HttpMethods.POST.getMethod(), "/deposit", HttpVersion.HTTP_1_1.toString(), header,deposit.toString());
+			request = new RequestHttp(HttpMethods.POST.getMethod(), "/account/deposit", HttpVersion.HTTP_1_1.toString(), header,deposit.toJSON());
 			response = Http.sendHTTPRequestAndGetHttpResponse(request, bankCurrent.getIp());
 
 		} catch (IOException e) {
@@ -353,7 +352,7 @@ public class ClientApp {
 		OperationAccountModel userReceptor = new OperationAccountModel(idReceptor, receptorBank);
 		OperationAccountModel userInitial = new OperationAccountModel(userLogin.getId(), bankCurrent);
 
-		transfer = new TransferModel(userInitial, userReceptor, value);
+		TransferModel transfer = new TransferModel(userInitial, userReceptor, value);
 
 		RequestHttp request;
 		ResponseHttp response;
@@ -362,7 +361,7 @@ public class ClientApp {
 
 		try {
 
-			request = new RequestHttp(HttpMethods.POST.getMethod(), "/transfer", HttpVersion.HTTP_1_1.toString(), header,transfer.toString());
+			request = new RequestHttp(HttpMethods.POST.getMethod(), "/account/transfer", HttpVersion.HTTP_1_1.toString(), header,transfer.toJSON());
 			response = Http.sendHTTPRequestAndGetHttpResponse(request, bankCurrent.getIp());
 
 		} catch (IOException e) {
