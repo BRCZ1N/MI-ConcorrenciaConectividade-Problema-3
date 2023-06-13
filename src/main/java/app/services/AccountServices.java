@@ -152,7 +152,7 @@ public class AccountServices {
 
 			try {
 
-				request = new RequestHttp(HttpMethods.PUT.getMethod(), "/account/deposit",HttpVersion.HTTP_1_1.toString(), header, deposit.toString());
+				request = new RequestHttp(HttpMethods.POST.getMethod(), "/account/deposit",HttpVersion.HTTP_1_1.toString(), header, deposit.toString());
 				response = Http.sendHTTPRequestAndGetHttpResponse(request,transfer.getAccountDestiny().getBank().getIp());
 
 			} catch (IOException e) {
