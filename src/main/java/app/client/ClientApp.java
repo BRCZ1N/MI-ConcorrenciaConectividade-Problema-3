@@ -253,10 +253,8 @@ public class ClientApp {
 		MessageModel message = gson.fromJson(response.getBody(), MessageModel.class);
 		System.out.println(message.getMessage());
 
-		System.out.println(response.getStatusLine());
 		if (response.getStatusLine().equals(HttpCodes.HTTP_200.getCodeHttp())) {
 
-			System.out.println("entrei aq");
 			return true;
 
 		}
@@ -388,7 +386,7 @@ public class ClientApp {
 
 		try {
 
-			request = new RequestHttp(HttpMethods.GET.getMethod(), "/balance", HttpVersion.HTTP_1_1.toString(), header);
+			request = new RequestHttp(HttpMethods.GET.getMethod(), "/account/balance?id="+userLogin.getId(), HttpVersion.HTTP_1_1.toString(), header);
 			response = Http.sendHTTPRequestAndGetHttpResponse(request, bankCurrent.getIp());
 
 		} catch (IOException e) {

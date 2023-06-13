@@ -9,7 +9,7 @@ public class AccountModel {
 	private String id;
 	private ArrayList<UserModel> beneficiares;
 	private String password;
-	private Double balance;
+	private double balance = 0;
 	private BankModel bank;
 
 	public AccountModel() {
@@ -66,7 +66,7 @@ public class AccountModel {
 
 	}
 
-	public void setBalance(Double balance) {
+	public void setBalance(double balance) {
 
 		this.balance = balance;
 
