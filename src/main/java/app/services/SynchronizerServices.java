@@ -125,7 +125,7 @@ public class SynchronizerServices {
 	public void exitCriticalRegion(OperationsModel operation) {
 
 		RequestSynchronObject request = findByOperation(operation).get();
-		requestCrOperationsBank.remove(request);
+		activeCrOperationsBank.remove(request);
 		logList.add(request);
 
 	}
