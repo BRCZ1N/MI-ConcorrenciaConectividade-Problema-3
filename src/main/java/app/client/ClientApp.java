@@ -313,7 +313,9 @@ public class ClientApp {
 		Double value = scanner.nextDouble();
 		System.out.println("===================================================");
 
+		operationAccount = new OperationAccountModel(userLogin.getId(), bankCurrent);
 		DepositModel deposit = new DepositModel(operationAccount, value);
+		
 		RequestHttp request;
 		ResponseHttp response;
 		Map<String, String> header = new HashMap<String, String>();
