@@ -26,7 +26,6 @@ import app.utilities.ResponseHttp;
 public class ClientApp {
 
 	private boolean connected;
-	private boolean login = true;
 	private Scanner scanner = new Scanner(System.in);
 	private BankModel bankCurrent;
 	private AccountModel user;
@@ -35,21 +34,7 @@ public class ClientApp {
 	private LoginAccountModel userLogin;
 	private UserModel beneficiareUser;
 
-	private void execBank() throws IOException, ServerConnectionException {
-
-		boolean connectedBank = true;
-
-		while (connectedBank) {
-
-			mainMenu();
-			loginClient();
-			menuClient();
-
-		}
-
-	}
-
-	private void mainMenu() throws ServerConnectionException, IOException {
+	private void execBank() throws ServerConnectionException, IOException {
 
 		boolean pick = true;
 
@@ -68,7 +53,11 @@ public class ClientApp {
 
 			if (choice.equals("1")) {
 
-				loginClient();
+				if(loginClient()) {
+					
+					menuClient();
+
+				}
 
 			} else if (choice.equals("2")) {
 
@@ -144,9 +133,9 @@ public class ClientApp {
 	private void registerUser() throws ServerConnectionException {
 
 		ArrayList<UserModel> beneficiares = new ArrayList<UserModel>();
-		boolean register = true;
+		boolean register = false;
 
-		while (register) {
+		while (!register) {
 
 			System.out.println("===================================================");
 			System.out.println("============ Digite a senha desejada:  ============");
@@ -203,8 +192,7 @@ public class ClientApp {
 
 			try {
 
-				request = new RequestHttp(HttpMethods.POST.getMethod(), "/account/create",
-						HttpVersion.HTTP_1_1.toString(), header, user.toJSON());
+				request = new RequestHttp(HttpMethods.POST.getMethod(), "/account/create",HttpVersion.HTTP_1_1.toString(), header, user.toJSON());
 				response = Http.sendHTTPRequestAndGetHttpResponse(request, bankCurrent.getIp());
 
 			} catch (IOException e) {
@@ -213,55 +201,62 @@ public class ClientApp {
 
 			}
 
-			System.out.println(response.getBody());
+			System.out.println(response.toString());
+			
+			if (response.getStatusLine().contains(HttpStatus.OK.getReasonPhrase())) {
+
+				register = true;
+
+			}
+
 			register = false;
+
 
 		}
 
 	}
 
-	private void loginClient() throws IOException, ServerConnectionException {
+	private boolean loginClient() throws IOException, ServerConnectionException {
 
-		while (login) {
+		System.out.println("===================================================");
+		System.out.println("=============== Central bancaria: =================");
+		System.out.println("===================================================");
+		System.out.println();
+		System.out.println("===================================================");
+		System.out.println("================ Digite seu id: ===================");
+		String id = scanner.next();
+		System.out.println("================ Digite sua senha: ================");
+		String password = scanner.next();
+		System.out.println("===================================================");
 
-			System.out.println("===================================================");
-			System.out.println("=============== Central bancaria: =================");
-			System.out.println("===================================================");
-			System.out.println();
-			System.out.println("===================================================");
-			System.out.println("================ Digite seu id: ===================");
-			String id = scanner.next();
-			System.out.println("===================================================");
+		userLogin = new LoginAccountModel(id, password);
+		RequestHttp request;
+		ResponseHttp response;
+		Map<String, String> header = new HashMap<String, String>();
+		header.put("Content-Type", "application/json");
 
-			System.out.println("===================================================");
-			System.out.println("================ Digite sua senha: ================");
-			String password = scanner.next();
-			System.out.println("===================================================");
+		try {
 
-			userLogin = new LoginAccountModel(id, password);
-			RequestHttp request;
-			ResponseHttp response;
-			Map<String, String> header = new HashMap<String, String>();
-			header.put("Content-Type", "application/json");
+			request = new RequestHttp(HttpMethods.PUT.getMethod(), "/account/auth", HttpVersion.HTTP_1_1.toString(),
+					header, userLogin.toJSON());
+			response = Http.sendHTTPRequestAndGetHttpResponse(request, bankCurrent.getIp());
 
-			try {
+		} catch (IOException e) {
 
-				request = new RequestHttp(HttpMethods.PUT.getMethod(), "/auth", HttpVersion.HTTP_1_1.toString(), header,
-						userLogin.toJSON());
-				response = Http.sendHTTPRequestAndGetHttpResponse(request, bankCurrent.getIp());
-
-			} catch (IOException e) {
-
-				throw new ServerConnectionException();
-
-			}
-			if (response.getStatusLine().contains(HttpStatus.OK.getReasonPhrase())) {
-				login = false;
-
-			}
-			System.out.println(response.getBody());
+			throw new ServerConnectionException();
 
 		}
+
+		System.out.println(response.toString());
+
+		if (response.getStatusLine().contains(HttpStatus.OK.getReasonPhrase())) {
+
+			return true;
+
+		}
+
+		return false;
+
 	}
 
 	private void menuClient() throws ServerConnectionException {
@@ -329,7 +324,7 @@ public class ClientApp {
 
 		}
 
-		System.out.println(response.getBody());
+		System.out.println(response.toString());
 
 	}
 
@@ -368,7 +363,7 @@ public class ClientApp {
 
 		}
 
-		System.out.println(response.getBody());
+		System.out.println(response.toString());
 
 	}
 
@@ -390,7 +385,7 @@ public class ClientApp {
 
 		}
 
-		System.out.println(response.getBody());
+		System.out.println(response.toString());
 	}
 
 	public static void main(String[] args) throws IOException, ServerConnectionException {

@@ -33,5 +33,13 @@ public class MessageModel {
 		return jsonFormatMessage;
 
 	}
+	
+	@Override
+	
+	public String toString() {
+		
+		return this.message;		
+	
+	}
 
 }
