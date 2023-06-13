@@ -7,6 +7,7 @@ import java.util.Map.Entry;
  * Esta � a classe ResponseHttp, que representa a resposta da requisi��o que
  * ser� enviada ao cliente conectado ao servidor.
  * 
+ * @author Bruno Campos de Oliveira Rocha
  * @version 1.0
  */
 public class ResponseHttp {

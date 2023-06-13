@@ -7,6 +7,7 @@ import java.util.Map.Entry;
  * Esta � a classe RequestHttp, que representa a requisi��o http do cliente
  * conectado ao servidor.
  *
+ * @author Bruno Campos de Oliveira Rocha
  * @version 1.0
  */
 public class RequestHttp {
