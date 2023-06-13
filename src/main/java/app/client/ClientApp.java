@@ -193,7 +193,6 @@ public class ClientApp {
 			try {
 
 				request = new RequestHttp(HttpMethods.POST.getMethod(), "/account/create",HttpVersion.HTTP_1_1.toString(), header, user.toJSON());
-				System.out.println(request);
 				response = Http.sendHTTPRequestAndGetHttpResponse(request, bankCurrent.getIp());
 
 			} catch (IOException e) {
