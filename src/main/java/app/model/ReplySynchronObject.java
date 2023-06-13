@@ -1,6 +1,6 @@
 package app.model;
 
-import org.json.JSONObject;
+import com.google.gson.Gson;
 
 public class ReplySynchronObject {
 
@@ -22,14 +22,9 @@ public class ReplySynchronObject {
 	
 	public String toJSON() {
 
-		JSONObject json = new JSONObject();
-
-		json.put("currentTimeStamp", this.currentTimeStamp);
-
-		String jsonFormatMessage = json.toString();
-
-		return jsonFormatMessage;
-
+		Gson gson = new Gson();
+		return gson.toJson(this);
+		
 	}
 
 }

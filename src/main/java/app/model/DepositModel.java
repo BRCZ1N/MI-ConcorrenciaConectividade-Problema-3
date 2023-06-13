@@ -1,6 +1,6 @@
 package app.model;
 
-import org.json.JSONObject;
+import com.google.gson.Gson;
 
 import app.utilities.OperationType;
 
@@ -12,18 +12,10 @@ public class DepositModel extends OperationsModel {
 
 	}
 
-	@Override
-	public String toString() {
+	public String toJSON() {
 
-		JSONObject json = new JSONObject();
-
-		json.put("accountOrigin", super.getAccountOrigin().toString());
-		json.put("value", super.getValue());
-		json.put("type", super.getType());
-
-		String jsonFormatMessage = json.toString();
-
-		return jsonFormatMessage;
+		Gson gson = new Gson();
+		return gson.toJson(this);
 
 	}
 }

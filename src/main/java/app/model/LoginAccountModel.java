@@ -1,6 +1,6 @@
 package app.model;
 
-import org.json.JSONObject;
+import com.google.gson.Gson;
 
 public class LoginAccountModel {
 
@@ -11,7 +11,7 @@ public class LoginAccountModel {
 
 		this.id = id;
 		this.password = password;
-		
+
 	}
 
 	public String getId() {
@@ -29,18 +29,12 @@ public class LoginAccountModel {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
+
 	public String toJSON() {
 
-		JSONObject json = new JSONObject();
-		
-		json.put("accountOrigin", this.id);
-		json.put("accountDestiny", this.password);
-		
-		String jsonFormatMessage = json.toString();
-		
-		return jsonFormatMessage;
+		Gson gson = new Gson();
+		return gson.toJson(this);
 
 	}
-	
+
 }

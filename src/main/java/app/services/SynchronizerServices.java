@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.http.HttpVersion;
 import org.springframework.stereotype.Component;
@@ -21,9 +23,6 @@ import app.utilities.Http;
 import app.utilities.HttpMethods;
 import app.utilities.RequestHttp;
 import app.utilities.ResponseHttp;
-
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Component
 public class SynchronizerServices {

@@ -1,6 +1,6 @@
 package app.model;
 
-import org.json.JSONObject;
+import com.google.gson.Gson;
 
 import app.utilities.OperationType;
 
@@ -54,19 +54,10 @@ public class OperationsModel {
 
 	}
 
-	@Override
-	public String toString() {
+	public String toJSON() {
 
-		JSONObject json = new JSONObject();
-
-		json.put("accountOrigin", this.accountOrigin.toString());
-		json.put("value", this.value);
-		json.put("type", this.type);
-
-		String jsonFormatMessage = json.toString();
-
-		return jsonFormatMessage;
-
+		Gson gson = new Gson();
+		return gson.toJson(this);
 	}
 
 }

@@ -1,6 +1,6 @@
 package app.model;
 
-import org.json.JSONObject;
+import com.google.gson.Gson;
 
 public class OperationAccountModel {
 
@@ -33,17 +33,10 @@ public class OperationAccountModel {
 		this.bank = bank;
 	}
 
-	public String toString() {
+	public String toJSON() {
 
-		JSONObject json = new JSONObject();
-
-		json.put("idAccount", this.idAccount);
-		json.put("bank", this.bank.toString());
-
-		String jsonFormatMessage = json.toString();
-
-		return jsonFormatMessage;
-
+		Gson gson = new Gson();
+		return gson.toJson(this);
 	}
 
 }

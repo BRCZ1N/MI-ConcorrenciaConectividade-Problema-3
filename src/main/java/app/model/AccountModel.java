@@ -1,7 +1,8 @@
 package app.model;
 
 import java.util.ArrayList;
-import org.json.JSONObject;
+
+import com.google.gson.Gson;
 
 public class AccountModel {
 
@@ -85,14 +86,8 @@ public class AccountModel {
 
 	public String toJSON() {
 
-		JSONObject json = new JSONObject();
-
-		json.put("password", this.password);
-		json.put("bank", this.bank);
-		json.put("beneficiares", this.beneficiares);
-		String jsonFormatMessage = json.toString();
-
-		return jsonFormatMessage;
+		Gson gson = new Gson();
+		return gson.toJson(this);
 
 	}
 

@@ -1,6 +1,6 @@
 package app.model;
 
-import org.json.JSONObject;
+import com.google.gson.Gson;
 
 public class RequestSynchronObject{
 
@@ -31,14 +31,8 @@ public class RequestSynchronObject{
 	
 	public String toJSON() {
 
-		JSONObject json = new JSONObject();
-
-		json.put("timeStamp", this.timeStamp);
-		json.put("operation", this.operation.toString());
-
-		String jsonFormatMessage = json.toString();
-
-		return jsonFormatMessage;
+		Gson gson = new Gson();
+		return gson.toJson(this);
 
 	}
 

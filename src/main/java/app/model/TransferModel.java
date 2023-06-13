@@ -1,5 +1,5 @@
 package app.model;
-import org.json.JSONObject;
+import com.google.gson.Gson;
 
 import app.utilities.OperationType;
 
@@ -20,20 +20,11 @@ public class TransferModel extends OperationsModel {
 		this.accountDestiny = accountDestiny;
 	}
 	
-	@Override
-	public String toString() {
+	public String toJSON() {
 
-		JSONObject json = new JSONObject();
+		Gson gson = new Gson();
+		return gson.toJson(this);
 		
-		json.put("accountOrigin", super.getAccountOrigin().toString());
-		json.put("accountDestiny", this.accountDestiny.toString());
-		json.put("value", super.getValue());
-		json.put("type", super.getType());
-
-		String jsonFormatMessage = json.toString();
-
-		return jsonFormatMessage;
-
 	}
 
 }

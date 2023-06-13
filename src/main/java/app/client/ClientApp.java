@@ -5,27 +5,27 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
-
 import org.apache.http.HttpVersion;
-import org.springframework.http.HttpStatus;
+import com.google.gson.Gson;
 
 import app.exceptions.ServerConnectionException;
 import app.model.AccountModel;
 import app.model.BankModel;
 import app.model.DepositModel;
 import app.model.LoginAccountModel;
+import app.model.MessageModel;
 import app.model.OperationAccountModel;
 import app.model.TransferModel;
 import app.model.UserModel;
 import app.utilities.BanksEnum;
 import app.utilities.Http;
+import app.utilities.HttpCodes;
 import app.utilities.HttpMethods;
 import app.utilities.RequestHttp;
 import app.utilities.ResponseHttp;
 
 public class ClientApp {
-
-	private boolean connected;
+	
 	private Scanner scanner = new Scanner(System.in);
 	private BankModel bankCurrent;
 	private AccountModel user;
@@ -38,9 +38,9 @@ public class ClientApp {
 
 		boolean pick = true;
 
+		bankCurrent = selectBank();
+		
 		while (pick) {
-
-			bankCurrent = selectBank();
 
 			System.out.println("Banco selecionado: " + "BANCO - " + bankCurrent.getId());
 			System.out.println("================== Pagina Inicial =================");
@@ -194,23 +194,26 @@ public class ClientApp {
 
 				request = new RequestHttp(HttpMethods.POST.getMethod(), "/account/create",HttpVersion.HTTP_1_1.toString(), header, user.toJSON());
 				response = Http.sendHTTPRequestAndGetHttpResponse(request, bankCurrent.getIp());
-
+				
 			} catch (IOException e) {
 
 				throw new ServerConnectionException();
 
 			}
 
-			System.out.println(response.toString());
+			Gson gson = new Gson();
+			MessageModel message = gson.fromJson(response.getBody(), MessageModel.class);
+			System.out.println(message.getMessage());
 			
-			if (response.getStatusLine().contains(HttpStatus.OK.getReasonPhrase())) {
+		
+			if (response.getStatusLine().equals(HttpCodes.HTTP_201.getCodeHttp())) {
 
 				register = true;
 
+			}else {
+				
+				register = false;
 			}
-
-			register = false;
-
 
 		}
 
@@ -246,10 +249,14 @@ public class ClientApp {
 
 		}
 
-		System.out.println(response.toString());
+		Gson gson = new Gson();
+		MessageModel message = gson.fromJson(response.getBody(), MessageModel.class);
+		System.out.println(message.getMessage());
 
-		if (response.getStatusLine().contains(HttpStatus.OK.getReasonPhrase())) {
+		System.out.println(response.getStatusLine());
+		if (response.getStatusLine().equals(HttpCodes.HTTP_200.getCodeHttp())) {
 
+			System.out.println("entrei aq");
 			return true;
 
 		}
@@ -260,6 +267,8 @@ public class ClientApp {
 
 	private void menuClient() throws ServerConnectionException {
 
+		boolean connected = true;
+		
 		while (connected) {
 
 			System.out.println("================ Menu de cliente ==================");
@@ -292,7 +301,9 @@ public class ClientApp {
 				}
 
 			} else {
+				
 				System.out.println("================ Digite uma opção correta ==================");
+				
 			}
 		}
 	}
@@ -322,7 +333,9 @@ public class ClientApp {
 
 		}
 
-		System.out.println(response.toString());
+		Gson gson = new Gson();
+		MessageModel message = gson.fromJson(response.getBody(), MessageModel.class);
+		System.out.println(message.getMessage());
 
 	}
 
@@ -360,7 +373,9 @@ public class ClientApp {
 
 		}
 
-		System.out.println(response.toString());
+		Gson gson = new Gson();
+		MessageModel message = gson.fromJson(response.getBody(), MessageModel.class);
+		System.out.println(message.getMessage());
 
 	}
 
@@ -382,7 +397,9 @@ public class ClientApp {
 
 		}
 
-		System.out.println(response.toString());
+		Gson gson = new Gson();
+		MessageModel message = gson.fromJson(response.getBody(), MessageModel.class);
+		System.out.println(message.getMessage());
 	}
 
 	public static void main(String[] args) throws IOException, ServerConnectionException {

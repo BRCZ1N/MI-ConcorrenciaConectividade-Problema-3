@@ -1,6 +1,6 @@
 package app.model;
 
-import org.json.JSONObject;
+import com.google.gson.Gson;
 
 public class MessageModel {
 
@@ -26,11 +26,8 @@ public class MessageModel {
 
 	public String toJSON() {
 
-		JSONObject json = new JSONObject();
-		json.put("message", this.message);
-		String jsonFormatMessage = json.toString();
-
-		return jsonFormatMessage;
+		Gson gson = new Gson();
+		return gson.toJson(this);
 
 	}
 	
