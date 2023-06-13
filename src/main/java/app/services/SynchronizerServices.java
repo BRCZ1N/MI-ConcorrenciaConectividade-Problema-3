@@ -131,7 +131,7 @@ public class SynchronizerServices {
 
 	public Optional<RequestSynchronObject> findByOperation(OperationsModel operation) {
 
-		for (RequestSynchronObject request : requestCrOperationsBank) {
+		for (RequestSynchronObject request : activeCrOperationsBank) {
 
 			if (request.getOperation().equals(operation)) {
 
