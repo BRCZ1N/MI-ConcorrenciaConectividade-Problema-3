@@ -4,30 +4,26 @@ import com.google.gson.Gson;
 
 public class BankModel {
 
-	private String id;
+	private Long id;
 	private String ip;
-
-	public BankModel(String id, String ip) {
-
-		this.id = id;
-		this.ip = ip;
-
-	}
 
 	public BankModel() {
 
 	}
 
-	public String getId() {
-
-		return id;
-
-	}
-
-	public void setId(String id) {
+	public BankModel(Long id, String ip) {
 
 		this.id = id;
+		this.ip = ip;
 
+	}
+	
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public String getIp() {

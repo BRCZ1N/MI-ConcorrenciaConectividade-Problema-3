@@ -101,7 +101,7 @@ public class AccountController {
 
 		try {
 			
-			serviceSynch.enterCriticalRegion(deposit);
+			serviceSynch.requestMessage(deposit);
 			Optional<AccountModel> resultOptional = serviceAccount.depositOperation(deposit);
 			if (resultOptional.isEmpty()) {
 
@@ -129,7 +129,7 @@ public class AccountController {
 
 		try {
 
-			serviceSynch.enterCriticalRegion(transfer);
+			serviceSynch.requestMessage(transfer);
 			Optional<AccountModel> resultOptional = serviceAccount.transferOperation(transfer);
 
 			if (resultOptional.isEmpty()) {

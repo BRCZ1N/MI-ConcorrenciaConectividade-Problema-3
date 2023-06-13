@@ -145,7 +145,7 @@ public class SynchronizerServices {
 
 	}
 
-	public ArrayList<ResponseHttp> enterCriticalRegion(OperationsModel operation) throws ServerConnectionException {
+	public ArrayList<ResponseHttp> requestMessage(OperationsModel operation) throws ServerConnectionException {
 
 		ArrayList<ResponseHttp> responses = new ArrayList<ResponseHttp>();
 
@@ -202,7 +202,13 @@ public class SynchronizerServices {
 			Optional<RequestSynchronObject> resultSearchRequestList = isContainsRequestCriticalZone(synch.getOperation(), requestCrOperationsBank);
 			Optional<RequestSynchronObject> resultSearchActiveList = isContainsRequestCriticalZone(synch.getOperation(),activeCrOperationsBank);
 
-			if ((resultSearchRequestList.isEmpty() && resultSearchActiveList.isEmpty())|| (!resultSearchRequestList.isEmpty() && resultSearchRequestList.get().getTimeStamp() > synch.getTimeStamp())) {
+			//Se está presente na lista de regiões criticas ativas e não está presente na lista de requisições
+			//Se não está presente na lista de regiões crítica ativas e se estiver na lista de requisições e o timeStamp do servidor que recebeu a request for menor 
+			//Se não está presente na lista de regiões crítica ativas e se estiver na lista de requisições e o timeStamp do servidor que recebeu a request for igual e o id do banco for menor
+			
+			if ((resultSearchActiveList.isEmpty() && resultSearchRequestList.isEmpty()) || (resultSearchActiveList.isEmpty() && !resultSearchRequestList.isEmpty() 
+				&& resultSearchRequestList.get().getTimeStamp() > synch.getTimeStamp()) || (resultSearchActiveList.isEmpty() && !resultSearchRequestList.isEmpty() 
+				&& resultSearchRequestList.get().getTimeStamp() == synch.getTimeStamp() && resultSearchRequestList.get().getOperation().getAccountOrigin().getBank().getId() > synch.getOperation().getAccountOrigin().getBank().getId())) {
 
 				replyDeferred = false;
 				message = new ReplySynchronObject(timeStamp.get());
@@ -214,7 +220,8 @@ public class SynchronizerServices {
 		return message;
 	}
 
-	public Optional<RequestSynchronObject> isContainsRequestCriticalZone(OperationsModel operation,CopyOnWriteArrayList<RequestSynchronObject> list) {
+	public Optional<RequestSynchronObject> isContainsRequestCriticalZone(OperationsModel operation,
+			CopyOnWriteArrayList<RequestSynchronObject> list) {
 
 		for (RequestSynchronObject request : list) {
 
