@@ -2,69 +2,92 @@ package app.model;
 
 import com.google.gson.Gson;
 
+import app.utilities.OperationType;
+
 /**
- * Classe que representa o modelo de conta de login.
+ * Classe que representa um modelo de operações.
  */
-public class LoginAccountModel {
+public class OperationsModel {
 
-    private String id;
-    private String password;
+    private OperationAccountModel accountOrigin;
+    private Double value;
+    private OperationType type;
 
     /**
-     * Construtor da classe LoginAccountModel.
+     * Construtor da classe OperationsModel.
      *
-     * @param id       O ID da conta de login.
-     * @param password A senha da conta de login.
+     * @param accountOrigin A conta de origem da operação.
+     * @param value         O valor da operação.
+     * @param type          O tipo da operação.
      */
-    public LoginAccountModel(String id, String password) {
-        this.id = id;
-        this.password = password;
+    public OperationsModel(OperationAccountModel accountOrigin, Double value, OperationType type) {
+        this.accountOrigin = accountOrigin;
+        this.value = value;
+        this.type = type;
     }
 
     /**
-     * Retorna o ID da conta de login.
+     * Retorna a conta de origem da operação.
      *
-     * @return O ID da conta de login.
+     * @return A conta de origem da operação.
      */
-    public String getId() {
-        return id;
+    public OperationAccountModel getAccountOrigin() {
+        return accountOrigin;
     }
 
     /**
-     * Define o ID da conta de login.
+     * Define a conta de origem da operação.
      *
-     * @param id O ID da conta de login.
+     * @param accountOrigin A conta de origem da operação.
      */
-    public void setId(String id) {
-        this.id = id;
+    public void setAccountOrigin(OperationAccountModel accountOrigin) {
+        this.accountOrigin = accountOrigin;
     }
 
     /**
-     * Retorna a senha da conta de login.
+     * Retorna o valor da operação.
      *
-     * @return A senha da conta de login.
+     * @return O valor da operação.
      */
-    public String getPassword() {
-        return password;
+    public Double getValue() {
+        return value;
     }
 
     /**
-     * Define a senha da conta de login.
+     * Define o valor da operação.
      *
-     * @param password A senha da conta de login.
+     * @param value O valor da operação.
      */
-    public void setPassword(String password) {
-        this.password = password;
+    public void setValue(Double value) {
+        this.value = value;
     }
 
     /**
-     * Converte o objeto LoginAccountModel para uma representação JSON.
+     * Retorna o tipo da operação.
      *
-     * @return A representação JSON do objeto LoginAccountModel.
+     * @return O tipo da operação.
+     */
+    public OperationType getType() {
+        return type;
+    }
+
+    /**
+     * Define o tipo da operação.
+     *
+     * @param type O tipo da operação.
+     */
+    public void setType(OperationType type) {
+        this.type = type;
+    }
+
+    /**
+     * Converte o objeto OperationsModel em uma representação JSON.
+     *
+     * @return Uma string JSON que representa o objeto OperationsModel.
      */
     public String toJSON() {
         Gson gson = new Gson();
         return gson.toJson(this);
     }
-
 }
+
