@@ -23,72 +23,116 @@ import app.utilities.RequestHttp;
 import app.utilities.ResponseHttp;
 
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicLong;
+
 @Component
 public class SynchronizerServices {
 
-	private static CopyOnWriteArrayList<RequestSynchronObject> crOperationsBank;
-	private static CopyOnWriteArrayList<RequestSynchronObject> logList;
-	
-	// olhar a biblioteca java.util.concurrent, pode servir na criação de listas para cenarios de concorrencia 
-	private static long timeStamp = 0;
+	private CopyOnWriteArrayList<RequestSynchronObject> requestCrOperationsBank;
+	private CopyOnWriteArrayList<RequestSynchronObject> logList;
+	private CopyOnWriteArrayList<RequestSynchronObject> activeCrOperationsBank;
+
+	private AtomicLong timeStamp;
 
 	public SynchronizerServices() {
 
-		SynchronizerServices.crOperationsBank = new CopyOnWriteArrayList<RequestSynchronObject>();
-		SynchronizerServices.logList = new CopyOnWriteArrayList<RequestSynchronObject>();
+		this.timeStamp = new AtomicLong();
+		this.timeStamp.set(0);
+		this.requestCrOperationsBank = new CopyOnWriteArrayList<RequestSynchronObject>();
+		this.logList = new CopyOnWriteArrayList<RequestSynchronObject>();
+		this.activeCrOperationsBank = new CopyOnWriteArrayList<RequestSynchronObject>();
 
 	}
 
-	public static CopyOnWriteArrayList<RequestSynchronObject> getCrOperationsBank() {
-		return crOperationsBank;
+	public CopyOnWriteArrayList<RequestSynchronObject> getRequestCrOperationsBank() {
+		return requestCrOperationsBank;
 	}
 
-	public static void setCrOperationsBank(CopyOnWriteArrayList<RequestSynchronObject> crOperationsBank) {
-		SynchronizerServices.crOperationsBank = crOperationsBank;
+	public void setRequestCrOperationsBank(CopyOnWriteArrayList<RequestSynchronObject> requestCrOperationsBank) {
+		this.requestCrOperationsBank = requestCrOperationsBank;
 	}
 
-	public static long getTimeStamp() {
+	public CopyOnWriteArrayList<RequestSynchronObject> getLogList() {
+		return logList;
+	}
+
+	public void setLogList(CopyOnWriteArrayList<RequestSynchronObject> logList) {
+		this.logList = logList;
+	}
+
+	public CopyOnWriteArrayList<RequestSynchronObject> getActiveCrOperationsBank() {
+		return activeCrOperationsBank;
+	}
+
+	public void setActiveCrOperationsBank(CopyOnWriteArrayList<RequestSynchronObject> activeCrOperationsBank) {
+		this.activeCrOperationsBank = activeCrOperationsBank;
+	}
+
+	public AtomicLong getTimeStamp() {
 		return timeStamp;
 	}
 
-	public static void setTimeStamp(long timeStamp) {
-		SynchronizerServices.timeStamp = timeStamp;
+	public void setTimeStamp(AtomicLong timeStamp) {
+		this.timeStamp = timeStamp;
 	}
 
 	public void addRequestBank(RequestSynchronObject synch) {
 
-		if (crOperationsBank.isEmpty()) {
+		if (requestCrOperationsBank.isEmpty()) {
 
-			crOperationsBank.add(synch);
+			requestCrOperationsBank.add(synch);
 
 		} else {
 
 			int range = 0;
 
-			while (range < crOperationsBank.size()
-					&& crOperationsBank.get(range).getTimeStamp() > synch.getTimeStamp()) {
+			while (range < requestCrOperationsBank.size()
+					&& requestCrOperationsBank.get(range).getTimeStamp() < synch.getTimeStamp()) {
 
 				range++;
 
 			}
 
-			crOperationsBank.add(synch);
+			requestCrOperationsBank.add(synch);
+
+		}
+
+	}
+
+	public void addCrRegionsBank(RequestSynchronObject synch) {
+
+		if (activeCrOperationsBank.isEmpty()) {
+
+			activeCrOperationsBank.add(synch);
+
+		} else {
+
+			int range = 0;
+
+			while (range < activeCrOperationsBank.size()
+					&& activeCrOperationsBank.get(range).getTimeStamp() < synch.getTimeStamp()) {
+
+				range++;
+
+			}
+
+			requestCrOperationsBank.add(synch);
 
 		}
 
 	}
 
 	public void exitCriticalRegion(OperationsModel operation) {
-		
+
 		RequestSynchronObject request = findByOperation(operation).get();
-		crOperationsBank.remove(request);
+		requestCrOperationsBank.remove(request);
 		logList.add(request);
-		
+
 	}
 
 	public Optional<RequestSynchronObject> findByOperation(OperationsModel operation) {
 
-		for (RequestSynchronObject request : crOperationsBank) {
+		for (RequestSynchronObject request : requestCrOperationsBank) {
 
 			if (request.getOperation().equals(operation)) {
 
@@ -97,7 +141,7 @@ public class SynchronizerServices {
 			}
 
 		}
-		
+
 		return Optional.empty();
 
 	}
@@ -113,10 +157,11 @@ public class SynchronizerServices {
 		Map<String, String> header = new HashMap<String, String>();
 		header.put("Content-Type", "application/json");
 
-		timeStamp++;
-		synchObject = new RequestSynchronObject(timeStamp, operation);
+		timeStamp.incrementAndGet();
+		synchObject = new RequestSynchronObject(timeStamp.get(), operation);
 		addRequestBank(synchObject);
-		request = new RequestHttp(HttpMethods.GET.getMethod(), "/account/reply", HttpVersion.HTTP_1_1.toString(),header, synchObject.toJSON());
+		request = new RequestHttp(HttpMethods.GET.getMethod(), "/account/reply", HttpVersion.HTTP_1_1.toString(),
+				header, synchObject.toJSON());
 
 		for (BanksEnum bank : BanksEnum.values()) {
 
@@ -126,7 +171,7 @@ public class SynchronizerServices {
 
 					ResponseHttp response = Http.sendHTTPRequestAndGetHttpResponse(request, bank.getBank().getIp());
 					ReplySynchronObject resp = gson.fromJson(request.getBody(), ReplySynchronObject.class);
-					timeStamp = Math.max(timeStamp, resp.getCurrentTimeStamp()) +1;
+					timeStamp.set(Math.max(timeStamp.get(), resp.getCurrentTimeStamp()) + 1);
 					responses.add(response);
 
 				} catch (IOException e) {
@@ -139,36 +184,52 @@ public class SynchronizerServices {
 
 		}
 
-		while (responses.toArray().length != BanksEnum.values().length);
+		while (responses.toArray().length != BanksEnum.values().length)
+			;
+
+		requestCrOperationsBank.remove(synchObject);
+		addCrRegionsBank(synchObject);
 
 		return responses;
 
 	}
 
 	public ReplySynchronObject replyMessage(RequestSynchronObject synch) throws UnknownHostException {
-	    boolean replyDeferred = true;
-	    ReplySynchronObject message = null;
 
-	    long initialTime = System.currentTimeMillis();
-	    long timeout = 11000; 
+		boolean replyDeferred = true;
+		ReplySynchronObject message = null;
 
-	    while (replyDeferred && (System.currentTimeMillis() - initialTime) < timeout) {
-	        if ((!synch.getOperation().getAccountOrigin().equals(crOperationsBank.get(0).getOperation().getAccountOrigin())) ||
-	                (synch.getOperation().getAccountOrigin().equals(crOperationsBank.get(0).getOperation().getAccountOrigin()) &&
-	                        crOperationsBank.get(0).getTimeStamp() > synch.getTimeStamp())) {
-	            message = new ReplySynchronObject(timeStamp);
-	            replyDeferred = false;
-	        }
-	    }
+		while (replyDeferred) {
 
-	    if (replyDeferred) {
-	  
-	        throw new RuntimeException("Tempo limite atingido ao aguardar a resposta.");
-	      //serve pra caso demore muito, não lembro o tempo que precisa por no timeout
-	    }
+			Optional<RequestSynchronObject> resultSearchRequestList = isContainsRequestCriticalZone(synch.getOperation(), requestCrOperationsBank);
+			Optional<RequestSynchronObject> resultSearchActiveList = isContainsRequestCriticalZone(synch.getOperation(),activeCrOperationsBank);
 
-	    return message;
+			if ((resultSearchRequestList.isEmpty() && resultSearchActiveList.isEmpty())|| (!resultSearchRequestList.isEmpty() && resultSearchRequestList.get().getTimeStamp() > synch.getTimeStamp())) {
+
+				replyDeferred = false;
+				message = new ReplySynchronObject(timeStamp.get());
+
+			}
+
+		}
+
+		return message;
 	}
 
+	public Optional<RequestSynchronObject> isContainsRequestCriticalZone(OperationsModel operation,CopyOnWriteArrayList<RequestSynchronObject> list) {
+
+		for (RequestSynchronObject request : list) {
+
+			if (request.getOperation().getAccountOrigin().equals(operation.getAccountOrigin())) {
+
+				return Optional.of(request);
+
+			}
+
+		}
+
+		return Optional.empty();
+
+	}
 
 }
