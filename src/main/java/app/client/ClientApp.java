@@ -285,11 +285,11 @@ public class ClientApp {
 
 				} else if (opcao.equals("2")) {
 
-					transferMoney();
+					transferBalance();
 
 				} else if (opcao.equals("3")) {
 
-					depositMoney();
+					depositBalance();
 
 				} else {
 
@@ -305,7 +305,7 @@ public class ClientApp {
 		}
 	}
 
-	private void depositMoney() throws ServerConnectionException {
+	private void depositBalance() throws ServerConnectionException {
 
 		System.out.println("==================== Deposito =====================");
 		System.out.println("===================================================");
@@ -338,7 +338,7 @@ public class ClientApp {
 
 	}
 
-	private void transferMoney() throws ServerConnectionException {
+	private void transferBalance() throws ServerConnectionException {
 
 		System.out.println("==================== Transferencia =====================");
 		System.out.println("========================================================");
