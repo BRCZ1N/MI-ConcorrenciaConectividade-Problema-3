@@ -3,7 +3,6 @@ package app.utilities;
 /**
  * Esta � a enumera��o HttpCodes, que possui os status de resposta da requisi��o
  * 
- * @author Bruno Campos de Oliveira Rocha
  * @version 1.0
  */
 public enum HttpCodes {

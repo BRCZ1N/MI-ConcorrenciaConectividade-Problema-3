@@ -332,7 +332,6 @@ public class ClientApp {
 
 		}
 
-		System.out.println(response.toString());
 		Gson gson = new Gson();
 		MessageModel message = gson.fromJson(response.getBody(), MessageModel.class);
 		System.out.println(message.getMessage());

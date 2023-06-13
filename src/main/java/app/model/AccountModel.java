@@ -1,94 +1,84 @@
 package app.model;
 
 import java.util.ArrayList;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import org.json.JSONObject;
 
-import com.google.gson.Gson;
-
+/**
+ * Modelo de conta bancária.
+ */
 public class AccountModel {
 
-	private String id;
-	private ArrayList<UserModel> beneficiares;
-	private String password;
-	private double balance = 0;
-	private BankModel bank;
+    private String id;
+    private ArrayList<UserModel> beneficiares;
+    private String password;
+    private Double balance;
+    private BankModel bank;
+    private BlockingQueue<OperationsModel> queueOperations;
 
-	public AccountModel() {
+    /**
+     * Construtor padrão.
+     */
+    public AccountModel() {
+    }
 
-	}
+    /**
+     * Construtor que recebe informações da conta bancária.
+     *
+     * @param password     A senha da conta.
+     * @param bank         O modelo do banco da conta.
+     * @param beneficiares Lista de beneficiários da conta.
+     */
+    public AccountModel(String password, BankModel bank, ArrayList<UserModel> beneficiares) {
+        this.password = password;
+        this.bank = bank;
+        this.beneficiares = beneficiares;
+        this.queueOperations = new LinkedBlockingQueue<>();
+    }
 
-	public AccountModel(String password, BankModel bank, ArrayList<UserModel> beneficiares) {
+    // Métodos getters e setters
 
-		this.password = password;
-		this.bank = bank;
-		this.beneficiares = beneficiares;
+    /**
+     * Obtém o ID da conta.
+     *
+     * @return O ID da conta.
+     */
+    public String getId() {
+        return id;
+    }
 
-	}
+    /**
+     * Define o ID da conta.
+     *
+     * @param id O ID da conta.
+     */
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public String getId() {
+    // Restante dos métodos e atributos
 
-		return id;
+    /**
+     * Adiciona um elemento à fila de operações da conta.
+     *
+     * @param operation A operação a ser adicionada.
+     */
+    public void queueAddElement(OperationsModel operation) {
+        this.queueOperations.add(operation);
+    }
 
-	}
-
-	public void setId(String id) {
-
-		this.id = id;
-
-	}
-
-	public ArrayList<UserModel> getBeneficiares() {
-
-		return beneficiares;
-
-	}
-
-	public void setBeneficiares(ArrayList<UserModel> beneficiares) {
-
-		this.beneficiares = beneficiares;
-
-	}
-
-	public String getPassword() {
-
-		return password;
-
-	}
-
-	public void setPassword(String password) {
-
-		this.password = password;
-
-	}
-
-	public Double getBalance() {
-
-		return balance;
-
-	}
-
-	public void setBalance(double balance) {
-
-		this.balance = balance;
-
-	}
-
-	public BankModel getBank() {
-
-		return bank;
-
-	}
-
-	public void setBank(BankModel bank) {
-
-		this.bank = bank;
-
-	}
-
-	public String toJSON() {
-
-		Gson gson = new Gson();
-		return gson.toJson(this);
-
-	}
+    /**
+     * Obtém a representação JSON da conta.
+     *
+     * @return A representação JSON da conta.
+     */
+    public String toJSON() {
+        JSONObject json = new JSONObject();
+        json.put("password", this.password);
+        json.put("bank", this.bank);
+        json.put("beneficiares", this.beneficiares);
+        return json.toString();
+    }
 
 }
