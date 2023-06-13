@@ -160,8 +160,7 @@ public class SynchronizerServices {
 		timeStamp.incrementAndGet();
 		synchObject = new RequestSynchronObject(timeStamp.get(), operation);
 		addRequestBank(synchObject);
-		request = new RequestHttp(HttpMethods.GET.getMethod(), "/account/reply", HttpVersion.HTTP_1_1.toString(),
-				header, synchObject.toJSON());
+		request = new RequestHttp(HttpMethods.POST.getMethod(), "/account/reply", HttpVersion.HTTP_1_1.toString(),header, synchObject.toJSON());
 
 		for (BanksEnum bank : BanksEnum.values()) {
 

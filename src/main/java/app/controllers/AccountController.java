@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -90,14 +89,14 @@ public class AccountController {
 
 	}
 
-	@GetMapping("/reply")
+	@PostMapping("/reply")
 	public ResponseEntity<String> replyRequest(@RequestBody RequestSynchronObject synch) throws UnknownHostException {
 
 		return ResponseEntity.status(HttpStatus.OK).body(serviceSynch.replyMessage(synch).toJSON());
 
 	}
 
-	@PutMapping("/deposit")
+	@PostMapping("/deposit")
 	public ResponseEntity<String> makeDeposit(@RequestBody DepositModel deposit) {
 
 		try {
@@ -125,7 +124,7 @@ public class AccountController {
 
 	}
 
-	@PutMapping("/transfer")
+	@PostMapping("/transfer")
 	public ResponseEntity<String> makeTransfer(@RequestBody TransferModel transfer) {
 
 		try {

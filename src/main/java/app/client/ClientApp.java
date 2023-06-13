@@ -237,8 +237,7 @@ public class ClientApp {
 
 		try {
 
-			request = new RequestHttp(HttpMethods.PUT.getMethod(), "/account/auth", HttpVersion.HTTP_1_1.toString(),
-					header, userLogin.toJSON());
+			request = new RequestHttp(HttpMethods.POST.getMethod(), "/account/auth", HttpVersion.HTTP_1_1.toString(),header, userLogin.toJSON());
 			response = Http.sendHTTPRequestAndGetHttpResponse(request, bankCurrent.getIp());
 
 		} catch (IOException e) {
@@ -314,8 +313,7 @@ public class ClientApp {
 
 		try {
 
-			request = new RequestHttp(HttpMethods.PUT.getMethod(), "/deposit", HttpVersion.HTTP_1_1.toString(), header,
-					deposit.toJSON());
+			request = new RequestHttp(HttpMethods.POST.getMethod(), "/deposit", HttpVersion.HTTP_1_1.toString(), header,deposit.toJSON());
 			response = Http.sendHTTPRequestAndGetHttpResponse(request, bankCurrent.getIp());
 
 		} catch (IOException e) {
@@ -353,7 +351,7 @@ public class ClientApp {
 
 		try {
 
-			request = new RequestHttp(HttpMethods.PUT.getMethod(), "/transfer", HttpVersion.HTTP_1_1.toString(), header,
+			request = new RequestHttp(HttpMethods.POST.getMethod(), "/transfer", HttpVersion.HTTP_1_1.toString(), header,
 					transfer.toJSON());
 			response = Http.sendHTTPRequestAndGetHttpResponse(request, bankCurrent.getIp());
 
