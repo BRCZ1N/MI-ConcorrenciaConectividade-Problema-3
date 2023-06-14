@@ -114,7 +114,7 @@ public class SynchronizerServices {
 
 			}
 
-			requestCrOperationsBank.add(synch);
+			activeCrOperationsBank.add(synch);
 
 		}
 
@@ -182,6 +182,7 @@ public class SynchronizerServices {
 
 		releaseTimeStamp(responses);
 		requestCrOperationsBank.remove(synchObject);
+		System.out.println(synchObject.toJSON());
 		addCrRegionsBank(synchObject);
 
 	}
