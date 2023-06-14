@@ -206,11 +206,6 @@ public class SynchronizerServices {
 				&& resultSearchRequestList.get().getTimeStamp() > synch.getTimeStamp()) || (resultSearchActiveList.isEmpty() && !resultSearchRequestList.isEmpty() 
 				&& resultSearchRequestList.get().getTimeStamp() == synch.getTimeStamp() && resultSearchRequestList.get().getOperation().getAccountOrigin().getBank().getId() > synch.getOperation().getAccountOrigin().getBank().getId())) {
 
-				System.out.println(timeStamp);
-				System.out.println(resultSearchActiveList.isEmpty() && resultSearchRequestList.isEmpty());
-				System.out.println(resultSearchActiveList.isEmpty() && !resultSearchRequestList.isEmpty() && resultSearchRequestList.get().getTimeStamp() > synch.getTimeStamp());
-				System.out.println((resultSearchActiveList.isEmpty() && !resultSearchRequestList.isEmpty() && resultSearchRequestList.get().getTimeStamp() == synch.getTimeStamp() && resultSearchRequestList.get().getOperation().getAccountOrigin().getBank().getId() > synch.getOperation().getAccountOrigin().getBank().getId()));
-				
 				replyDeferred = false;
 				message = new ReplySynchronObject(timeStamp.get());
 
