@@ -182,7 +182,6 @@ public class SynchronizerServices {
 
 		releaseTimeStamp(responses);
 		requestCrOperationsBank.remove(synchObject);
-		System.out.println(synchObject.toJSON());
 		addCrRegionsBank(synchObject);
 
 	}
