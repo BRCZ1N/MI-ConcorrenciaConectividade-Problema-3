@@ -271,8 +271,8 @@ public class ClientApp {
 			System.out.println("================ Menu de cliente ==================");
 			System.out.println("===================================================");
 			System.out.println("====== (1) - Consultar Saldo");
-			System.out.println("====== (2) - Transferir dinheiro");
-			System.out.println("====== (3) - Depositar dinheiro");
+			System.out.println("====== (2) - Transferir Saldo");
+			System.out.println("====== (3) - Depositar Saldo");
 			System.out.println("====== (4) - Desconectar");
 			System.out.println("=========== Digite a opcao desejada ===============");
 			String opcao = scanner.next();
