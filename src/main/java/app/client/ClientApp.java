@@ -24,6 +24,9 @@ import app.utilities.HttpMethods;
 import app.utilities.RequestHttp;
 import app.utilities.ResponseHttp;
 
+/**
+ * Classe responsável por simular um cliente do banco. Permite ao usuário realizar operações bancárias, como login, criar conta, consultar saldo, transferir saldo e depositar saldo.
+ */
 public class ClientApp {
 	
 	private Scanner scanner = new Scanner(System.in);
@@ -33,6 +36,11 @@ public class ClientApp {
 	private LoginAccountModel userLogin;
 	private UserModel beneficiareUser;
 
+	/**
+	 * Método principal que executa a simulação do cliente de banco.
+	 * @throws ServerConnectionException Se ocorrer um erro na conexão com o servidor.
+	 * @throws IOException Se ocorrer um erro de I/O durante a execução.
+	 */
 	private void execBank() throws ServerConnectionException, IOException {
 
 		boolean pick = true;
@@ -76,6 +84,10 @@ public class ClientApp {
 
 	}
 
+	/**
+	 * Permite ao usuário selecionar um banco.
+	 * @return O objeto BankModel representando o banco selecionado.
+	 */
 	public BankModel selectBank() {
 
 		boolean choice = true;
@@ -126,8 +138,8 @@ public class ClientApp {
 	}
 
 	/**
-	 * @param ipBank
-	 * @throws ServerConnectionException
+	 * Registra um novo usuário no banco.
+	 * @throws ServerConnectionException se ocorrer um erro de conexão com o servidor.
 	 */
 	private void registerUser() throws ServerConnectionException {
 
@@ -218,6 +230,12 @@ public class ClientApp {
 
 	}
 
+	/**
+	 * Realiza o login do cliente.
+	 * @return true se o login for bem-sucedido, false caso contrário.
+	 * @throws IOException se ocorrer um erro de entrada/saída.
+	 * @throws ServerConnectionException se ocorrer um erro de conexão com o servidor.
+	 */
 	private boolean loginClient() throws IOException, ServerConnectionException {
 
 		System.out.println("===================================================");
@@ -262,6 +280,10 @@ public class ClientApp {
 
 	}
 
+	/**
+	 * Exibe o menu principal do cliente.
+	 * @throws ServerConnectionException se ocorrer um erro de conexão com o servidor.
+	 */
 	private void menuClient() throws ServerConnectionException {
 
 		boolean connected = true;
@@ -305,6 +327,10 @@ public class ClientApp {
 		}
 	}
 
+	/**
+	 * Realiza um depósito na conta do cliente.
+	 * @throws ServerConnectionException se ocorrer um erro de conexão com o servidor.
+	 */
 	private void depositBalance() throws ServerConnectionException {
 
 		System.out.println("==================== Deposito =====================");
@@ -338,6 +364,10 @@ public class ClientApp {
 
 	}
 
+	/**
+	 * Realiza uma transferência de saldo para outra conta.
+	 * @throws ServerConnectionException se ocorrer um erro de conexão com o servidor.
+	 */
 	private void transferBalance() throws ServerConnectionException {
 
 		System.out.println("==================== Transferencia =====================");
@@ -378,6 +408,10 @@ public class ClientApp {
 
 	}
 
+	/**
+	 * Consulta o saldo da conta do cliente.
+	 * @throws ServerConnectionException se ocorrer um erro de conexão com o servidor.
+	 */
 	private void consultBalance() throws ServerConnectionException {
 
 		RequestHttp request;
@@ -401,6 +435,12 @@ public class ClientApp {
 		System.out.println(message.getMessage());
 	}
 
+	/**
+	 * Método principal para execução do cliente bancário.
+	 * @param args os argumentos de linha de comando.
+	 * @throws IOException se ocorrer um erro de entrada/saída.
+	 * @throws ServerConnectionException se ocorrer um erro de conexão com o servidor.
+	 */
 	public static void main(String[] args) throws IOException, ServerConnectionException {
 
 		ClientApp appBank = new ClientApp();

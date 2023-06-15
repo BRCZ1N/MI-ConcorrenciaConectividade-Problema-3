@@ -2,6 +2,9 @@ package app.utilities;
 
 import app.model.BankModel;
 
+/**
+ * Enumeração que representa os bancos disponíveis.
+ */
 public enum BanksEnum {
 	
 	BANK_1(new BankModel(1L,"http://172.16.103.3:8000")),
@@ -11,18 +14,33 @@ public enum BanksEnum {
 	
 	private BankModel bank;
 	
+	/**
+	 * Cria uma instância de BanksEnum com o banco especificado.
+	 * 
+	 * @param bank O modelo do banco.
+	 */
 	private BanksEnum(BankModel bank) {
 		
 		this.bank = bank;
 		
 	}
 
+	/**
+	 * Obtém o modelo do banco.
+	 * 
+	 * @return O modelo do banco.
+	 */
 	public BankModel getBank() {
 		
 		return bank;
 		
 	}
 
+	/**
+	 * Define o modelo do banco.
+	 * 
+	 * @param bank O modelo do banco.
+	 */
 	public void setBank(BankModel bank) {
 		
 		this.bank = bank;

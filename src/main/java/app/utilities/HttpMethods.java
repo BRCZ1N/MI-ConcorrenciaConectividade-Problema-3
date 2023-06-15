@@ -3,7 +3,6 @@ package app.utilities;
 /**
  * Esta � a enumera��o HttpCodes, que possui os metodos das requisi��es http
  * 
- * @author Bruno Campos de Oliveira Rocha
  * @version 1.0
  */
 public enum HttpMethods {

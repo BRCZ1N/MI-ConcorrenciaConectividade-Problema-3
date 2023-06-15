@@ -1,8 +1,6 @@
 package app.utilities;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,56 +10,11 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+/**
+ * Classe responsável por enviar as requisições a outro banco 
+ */
 public class Http {
-	/**
-	 * Lê uma requisição HTTP a partir de um InputStream e retorna um objeto RequestHttp contendo os dados da requisição.
-	 * 
-	 * @param input InputStream contendo a requisição HTTP
-	 * @return um objeto RequestHttp contendo os dados da requisição, ou null se não houver dados na InputStream
-	 * @throws IOException se ocorrer um erro ao ler a InputStream
-	 */
-	public static RequestHttp readRequest(InputStream input) throws IOException {
-
-		BufferedInputStream buffer = new BufferedInputStream(input);
-		StringBuilder requestStringBuilder = new StringBuilder();
-
-		if (!(buffer.available() > 0)) {
-
-			return null;
-
-		}
-
-		while (buffer.available() > 0) {
-
-			requestStringBuilder.append((char) buffer.read());
-
-		}
-
-		String[] request = requestStringBuilder.toString().split("\r\n\r\n");
-		String[] headers = request[0].split("\r\n");
-		String[] requestFirstLine = headers[0].split(" ");
-		Map<String, String> mapHeaders = new HashMap<>();
-
-		String method = requestFirstLine[0];
-		String path = requestFirstLine[1];
-		String httpVersion = requestFirstLine[2];
-
-		for (int headerLine = 1; headerLine < headers.length; headerLine++) {
-
-			String[] headerKeyValue = headers[headerLine].split(":");
-			mapHeaders.put(headerKeyValue[0], headerKeyValue[1].trim());
-
-		}
-
-		if (request.length > 1) {
-
-			String jsonBody = request[1];
-			return new RequestHttp(method, path, httpVersion, mapHeaders, jsonBody);
-		}
-
-		return new RequestHttp(method, path, httpVersion, mapHeaders);
-
-	}
+	
 	/**
 	 * Envia uma requisição HTTP e retorna a resposta HTTP correspondente em um objeto ResponseHttp.
 	 * 

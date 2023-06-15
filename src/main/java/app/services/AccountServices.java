@@ -22,25 +22,48 @@ import app.utilities.RequestHttp;
 import app.utilities.ResponseHttp;
 
 @Component
+/**
+ * Classe responsável por representar os serviços de conta
+ */
 public class AccountServices {
 
 	private Map<String, AccountModel> accounts;
 	private long id = 0;
 
+	/**
+	 * Construtor da classe AccountServices.
+	 */
 	public AccountServices() {
 
 		this.setAccounts(new ConcurrentHashMap<String, AccountModel>());
 
 	}
 
+	/**
+	 * Obtém a lista de contas.
+	 * 
+	 * @return A lista de contas.
+	 */
 	public Map<String, AccountModel> getAccounts() {
 		return accounts;
 	}
 
+	/**
+	 * Define a lista de contas.
+	 * 
+	 * @param accounts A lista de contas.
+	 */
 	public void setAccounts(Map<String, AccountModel> accounts) {
 		this.accounts = accounts;
 	}
 
+	/**
+	 * Cria uma nova conta.
+	 * 
+	 * @param client O objeto AccountModel representando o cliente.
+	 * @return Um Optional contendo a nova conta criada, ou Optional.empty() caso a
+	 *         conta já exista.
+	 */
 	public Optional<AccountModel> createAccount(AccountModel client) {
 
 		if (accounts.containsValue(client)) {
@@ -57,6 +80,13 @@ public class AccountServices {
 
 	}
 
+	/**
+	 * Realiza uma operação de depósito em uma conta.
+	 * 
+	 * @param deposit O objeto DepositModel representando a operação de depósito.
+	 * @return Um Optional contendo a conta atualizada após o depósito, ou
+	 *         Optional.empty() caso a conta não seja encontrada.
+	 */
 	public Optional<AccountModel> depositOperation(DepositModel deposit) {
 
 		Optional<AccountModel> resultSearch = findById(deposit.getAccountOrigin().getIdAccount());
@@ -74,6 +104,13 @@ public class AccountServices {
 
 	}
 
+	/**
+	 * Obtém o saldo de uma conta.
+	 * 
+	 * @param id O ID da conta.
+	 * @return Um Optional contendo a conta encontrada, ou Optional.empty() caso a
+	 *         conta não seja encontrada.
+	 */
 	public Optional<AccountModel> getBalanceOperation(String id) {
 
 		Optional<AccountModel> resultSearch = findById(id);
@@ -88,6 +125,18 @@ public class AccountServices {
 
 	}
 
+	/**
+	 * Realiza uma operação de transferência entre contas.
+	 * 
+	 * @param transfer O objeto TransferModel representando a operação de
+	 *                 transferência.
+	 * @return Um Optional contendo a conta de origem atualizada após a transferência,
+	 *         ou Optional.empty() caso ocorra algum erro na transferência.
+	 * @throws InsufficientBalanceException   Se a conta de origem não possuir saldo
+	 *                                        suficiente para a transferência.
+	 * @throws ServerConnectionException      Se ocorrer um erro na conexão com o
+	 *                                        servidor da conta de destino.
+	 */
 	public Optional<AccountModel> transferOperation(TransferModel transfer) throws InsufficientBalanceException, ServerConnectionException {
 
 		AccountModel accountOrigin;
@@ -176,6 +225,13 @@ public class AccountServices {
 
 	}
 
+	/**
+	 * Autentica uma conta com base no ID e senha fornecidos.
+	 * 
+	 * @param account O objeto LoginAccountModel representando a conta a ser
+	 *                autenticada.
+	 * @return true se a autenticação for bem-sucedida, false caso contrário.
+	 */
 	public boolean authenticate(LoginAccountModel account) {
 
 		for (Map.Entry<String, AccountModel> entry : accounts.entrySet()) {
@@ -193,6 +249,13 @@ public class AccountServices {
 
 	}
 
+	/**
+	 * Procura uma conta pelo seu ID.
+	 * 
+	 * @param id O ID da conta.
+	 * @return Um Optional contendo a conta encontrada, ou Optional.empty() caso a
+	 *         conta não seja encontrada.
+	 */
 	public Optional<AccountModel> findById(String id) {
 
 		for (Map.Entry<String, AccountModel> entry : accounts.entrySet()) {

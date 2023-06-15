@@ -25,6 +25,9 @@ import app.utilities.RequestHttp;
 import app.utilities.ResponseHttp;
 
 @Component
+/**
+ * Classe responsável por representar os serviços de sincronização
+ */
 public class SynchronizerServices {
 
 	private CopyOnWriteArrayList<RequestSynchronObject> requestCrOperationsBank;
@@ -32,6 +35,10 @@ public class SynchronizerServices {
 	private CopyOnWriteArrayList<RequestSynchronObject> activeCrOperationsBank;
 	private AtomicLong timeStamp;
 
+	/**
+	 * Construtor da classe SynchronizerServices.
+	 * Inicializa as listas e o contador de timestamp.
+	 */
 	public SynchronizerServices() {
 
 		this.timeStamp = new AtomicLong();
@@ -42,38 +49,74 @@ public class SynchronizerServices {
 
 	}
 
+	/**
+	 * Obtém a lista de requisições de operações bancárias críticas.
+	 * @return A lista de requisições de operações bancárias críticas.
+	 */
 	public CopyOnWriteArrayList<RequestSynchronObject> getRequestCrOperationsBank() {
 		return requestCrOperationsBank;
 	}
 
+	/**
+	 * Define a lista de requisições de operações bancárias críticas.
+	 * @param requestCrOperationsBank A lista de requisições de operações bancárias críticas.
+	 */
 	public void setRequestCrOperationsBank(CopyOnWriteArrayList<RequestSynchronObject> requestCrOperationsBank) {
 		this.requestCrOperationsBank = requestCrOperationsBank;
 	}
 
+	/**
+	 * Obtém a lista de registros de log.
+	 * @return A lista de registros de log.
+	 */
 	public CopyOnWriteArrayList<RequestSynchronObject> getLogList() {
 		return logList;
 	}
 
+	/**
+	 * Define a lista de registros de log.
+	 * @param logList A lista de registros de log.
+	 */
 	public void setLogList(CopyOnWriteArrayList<RequestSynchronObject> logList) {
 		this.logList = logList;
 	}
 
+	/**
+	 * Obtém a lista de operações bancárias críticas ativas.
+	 * @return A lista de operações bancárias críticas ativas.
+	 */
 	public CopyOnWriteArrayList<RequestSynchronObject> getActiveCrOperationsBank() {
 		return activeCrOperationsBank;
 	}
 
+	/**
+	 * Define a lista de operações bancárias críticas ativas.
+	 * @param activeCrOperationsBank A lista de operações bancárias críticas ativas.
+	 */
 	public void setActiveCrOperationsBank(CopyOnWriteArrayList<RequestSynchronObject> activeCrOperationsBank) {
 		this.activeCrOperationsBank = activeCrOperationsBank;
 	}
-
+	
+	/**
+	 * Obtém o contador de timestamp.
+	 * @return O contador de timestamp.
+	 */
 	public AtomicLong getTimeStamp() {
 		return timeStamp;
 	}
 
+	/**
+	 * Define o contador de timestamp.
+	 * @param timeStamp O contador de timestamp.
+	 */
 	public void setTimeStamp(AtomicLong timeStamp) {
 		this.timeStamp = timeStamp;
 	}
 
+	/**
+	 * Adiciona uma requisição a lista de operações críticas em espera do banco.
+	 * @param synch O objeto de requisição de sincronização.
+	 */
 	public void addRequestBank(RequestSynchronObject synch) {
 
 		if (requestCrOperationsBank.isEmpty()) {
@@ -97,6 +140,10 @@ public class SynchronizerServices {
 
 	}
 
+	/**
+	 * Adiciona uma requisição a lista de operações críticas ativas do banco.
+	 * @param synch O objeto de requisição de sincronização.
+	 */
 	public void addCrRegionsBank(RequestSynchronObject synch) {
 
 		if (activeCrOperationsBank.isEmpty()) {
@@ -120,6 +167,10 @@ public class SynchronizerServices {
 
 	}
 
+	/**
+	 * Sai da região crítica para uma determinada operação.
+	 * @param operation A operação a ser finalizada na região crítica.
+	 */
 	public void exitCriticalRegion(OperationsModel operation) {
 
 		RequestSynchronObject request = findByOperation(operation).get();
@@ -128,6 +179,11 @@ public class SynchronizerServices {
 
 	}
 
+	/**
+	 * Localiza uma requisição de sincronização com base em uma operação.
+	 * @param operation A operação a ser pesquisada.
+	 * @return Um objeto Optional contendo a requisição de sincronização encontrada, ou um Optional vazio se não encontrada.
+	 */
 	public Optional<RequestSynchronObject> findByOperation(OperationsModel operation) {
 
 		for (RequestSynchronObject request : activeCrOperationsBank) {
@@ -144,6 +200,11 @@ public class SynchronizerServices {
 
 	}
 
+	/**
+	 * Envia as requisições aos outros bancos do sistema para uma operação que precisa acessar uma zona crítica.
+	 * @param operation A operação para a qual a mensagem será enviada.
+	 * @throws ServerConnectionException Exceção lançada em caso de falha na conexão com o servidor.
+	 */
 	public void requestMessage(OperationsModel operation) throws ServerConnectionException {
 
 		ArrayList<ResponseHttp> responses = new ArrayList<ResponseHttp>();
@@ -186,6 +247,12 @@ public class SynchronizerServices {
 
 	}
 
+	/**
+	 * Responde a uma requisição a entrada de seção crítica de um banco solicitante ou atrasa a mesma caso não possa permitir.
+	 * @param synch O objeto de requisição de sincronização.
+	 * @return O objeto ReplySynchronObject contendo a mensagem de resposta.
+	 * @throws UnknownHostException Exceção lançada em caso de falha na conexão com o host desconhecido.
+	 */
 	public ReplySynchronObject replyMessage(RequestSynchronObject synch) throws UnknownHostException {
 
 		boolean replyDeferred = true;
@@ -216,6 +283,12 @@ public class SynchronizerServices {
 		return message;
 	}
 
+	/**
+	 * Verifica se uma operação está presente na lista de regiões críticas ativas ou em espera.
+	 * @param operation A operação a ser verificada.
+	 * @param list A lista de regiões críticas ativas ou em espera.
+	 * @return Um objeto Optional contendo a requisição de sincronização encontrada, ou um Optional vazio se não encontrada.
+	 */
 	public Optional<RequestSynchronObject> isContainsRequestCriticalZone(OperationsModel operation,
 			CopyOnWriteArrayList<RequestSynchronObject> list) {
 
@@ -233,6 +306,10 @@ public class SynchronizerServices {
 
 	}
 	
+	/**
+	 * Atualiza o timestamp com base nas respostas recebidas.
+	 * @param responses As respostas HTTP recebidas dos servidores.
+	 */
 	public void releaseTimeStamp(ArrayList<ResponseHttp> responses) {
 		
 		for(ResponseHttp response: responses) {
