@@ -1,14 +1,14 @@
-<h2 align="center">PSistema de Bancos não centralizados </h2>
+<h2 align="center">Sistema de Bancos não centralizados </h2>
  
 # Índice
 
-- [Desenvolvedores](#desenvolvedores)
+- [Desenvolvedores](#Desenvolvedores)
 - [Solução](#Solução)
 - [Componentes](#Componentes)
-   - [AppBank](#Posto)
-   - [Banco](#Névoa)
-   - [Algoritmo de Concorrencia](#Carro)
-- [Considerações finais](#consideracoes)
+   - [Aplicação cliente](#Aplicação cliente)
+   - [Servidor do banco](#Servidor do banco)
+   - [Algoritmo de Concorrencia](#Algoritmo de concorrencia)
+- [Considerações finais](#Considerações)
 
 # Desenvolvedores
 <br /><a href="https://github.com/BRCZ1N">Bruno Campos</a>
@@ -16,11 +16,7 @@
 
 # Introdução
 
-Esse problema foi desenvolvido com a proposta de criar o prototipo de um banco desentralizado, levando em conta um ambiente de extrema concorrencia de requisições 
-
-O relatório presente pretende descrever de forma simples um projeto que se baseia em um sistema de comunicação que utiliza arquitetura em rede desenvolvido na linguagem de programação Java.
-
-O presente projeto foi desenvolvido a partir do uso da comunicação por meio de requisições Http entre servidores de bancos e AppBank de uma maneira não centralizada, onde requisições são enviadas pelo cliente e densenvolvidas a partir de umas pespectiva onde os bancos se comunicam entre si, sem a necessidade de um orgão regulador 
+Esse problema foi desenvolvido com a proposta de criar o prototipo de um banco descentralizado, levando em conta um ambiente de extrema concorrencia de requisições. O relatório presente pretende descrever de forma simples um projeto que se baseia em um sistema de comunicação que utiliza arquitetura em rede desenvolvido na linguagem de programação Java. O presente projeto foi desenvolvido a partir do uso da comunicação por meio de requisições Http entre servidores dos bancos e a aplicação cliente de uma maneira não centralizada, onde requisições são enviadas pelo cliente e densenvolvidas a partir de uma pespectiva onde os bancos se comunicam entre si, sem a necessidade de um orgão regulador e finalmente utilizando algoritmo de controle de concorrência.
 
 # Fundamentação teórica
 
@@ -33,39 +29,32 @@ O presente projeto foi desenvolvido a partir do uso da comunicação por meio de
 
  # Metodologia geral
 
-Para realização deste projeto a prori pensou-se no emprego de um tipo de arquitetura que poderia se adequar ao projeto, e ficou acordado que a arquitetura utilizada seria de névoa, afinal considerou-se que esse tipo arquitetural poderia fornecer um melhor desempenho com relação ao excesso de dados enviados, tendo em vista que o problema considera que o cenário proposto é na casa dos milhares de veículos, e portanto se sua concentração fosse na núvem isso poderia gerar diversas problemáticas de desempenho na aplicação com relação a quantidade de dados.
+Para realização deste projeto a prori pensou-se no emprego de um tipo de arquitetura que poderia se adequar ao projeto, e ficou acordado que a arquitetura utilizada seria P2P, afinal os bancos se comportariam uma hora como clientes e outrora como servidores, além disso para fins de controle de concorrência utilizou-se da ideia do algoritmo de concorrencia em ambientes distribuidos de Ricart e Agrawala.
 
-Com relação a comunicação entre os nós da rede ficou estabelicido da seguinte forma, cada carro envia requisições HTTP via API REST a uma névoa regional que estivesse dentro dos limites de sua localização. A névoa regional como mencionado anteriormente se comunica com o carro e retorna resposta para essas requisições, além disso ela se comunica via protocolo de comunicação MQTT com os postos de recarga para receber os dados dos postos da região, e portanto receber os dados de localização dos postos, dados de fila, nome do posto e até mesmo o seu identificador, com finalidade de obter e processar os dados que devem ser utilizados pelos usuarios finais, isto é, os carros, por fim a mesma envia os dados do melhor posto de sua região para a núvem via MQTT através de uma bridge MQTT. Finalmente tem-se a núvem que recebe os dados da névoa e armazena-os para retornar as névoas regionais uma lista dos melhores postos de cada região.
-
-Com relação as névoas regionais a sua implementação ocorreu da seguinte forma, utilizou-se de uma aplicação spring para que a comunicação HTTP fosse efetuada, isto é, precisou de controladores, para enviar os dados para os usuários finais e para auxiliar os mesmos foram criados serviços com finalidade de processar algumas informações que foram armazenadas na névoa advindo dos postos e da núvem. Após receber os dados via MQTT eles foram processados e armazenados para que ficassem disponível aos usuários, além disso precisou-se de callbacks para a comunicação MQTT e threads, os callbacks foram utilizados para receber as mensagens via MQTT entre o posto e névoa, e entre névoa e núvem, além disso nessa comunicação névoa-nuvem utilizou-se de uma bridge mqtt, isto é, uma ponte de comunicação entre o broker regional e o broker global, para que fossem trocados os dados entre a névoa regional e o broker global
-
-A aplicação que corresponde aos carros foram desenvolvidos com uma interface que utiliza o método generateBatteryCar para gerar o nível inicial da bateria do automóvel, juntamente com o método generateCurrentDischargeLevel, que geraria o nível de descarga que o carro teria. Além disso, o método generatePosUser é usado para definir a posição relativa aleatória do automóvel. Esses métodos gerariam números aleatórios para cada automóvel que existisse no sistema, então 3 threads são criadas com o objetivo de reduzir o nível de bateria do carro, monitorar o nível de bateria para gerar alertas ao motorista e a thread que irá definir qual estação de rádio o carro se comunicará, dependendo da latitude e longitude gerada automaticamente anteriormente. Finalmente, o motorista tem acesso a um menu que exibe o nível de carga da bateria do carro e também possui um menu com opções para buscar postos com as filas mais curtas na região, buscar os postos mais próximos do carro e até mesmo buscar postos em outras regiões que tenham as melhores condições de acesso.
-
-Com o objetivo de rotear informações para as diferentes nevoas de cada região, uma nuvem foi construída com uma estrutura que permite o recebimento de dados enviados por cada nevoa no formato MQTT e o envio posterior desses dados para outras nevoas presentes no sistema. Para fazer isso, foram utilizadas duas threads, uma para receber dados de todas as nevoas, que possuem um identificador único para evitar a duplicação de dados, e outra para enviar esses dados para cada nevoa.É importante destacar que apenas os dados dos melhores postos de cada região são trocados pelas nevoas. Esses dados são compartilhados para eventual necessidade de acesso a um posto presente em uma região diferente.
+O servidor do banco foi elaborado da seguinte forma, utilizou-se de uma aplicação spring para que a comunicação HTTP fosse efetuada, isto é, precisou de controladores, para enviar os dados para os usuários finais e para trocar os dados entre as instituições bancárias, para cada banco utilizou-se de serviços de armazenamento temporário de dados para que fossem armazenados a contas dos clientes, cada conta do banco deveria ter um identificador que seria gerado na hora da criação da conta nos serviços de conta, além disso cada conta da instituição deveria haver um saldo, uma lista de beneficiários da conta, uma senha e finalmente um objeto contendo uma representação simbolica de informações sobre o banco, isto é, uma entidade contendo o endereço ip e o identificador do banco, portanto cada banco tinha o serviço de criar e armazenar contas, autenticar contas, enviar o saldo para o cliente, comunicar-se com outros bancos para que as requisições que envolvem-se regiões críticas, isto é, as contas dos bancos fossem realizadas, além disso cada banco tem o dever de retornar uma resposta ao banco solicitante, além depositar saldo conforme fosse requerido, final o mesmo tratava condições de erro como saldo insuficiente, retornando por fim para cada operação uma resposta adequada.
  
- O posto de recarga utiliza a geolocalização para determinar sua posição relativa e se conectar à nevoa presente na área. Além disso, ele possui uma interface que permite ao usuário inserir o nome do estabelecimento. Após a inserção do nome, as threads são iniciadas para configurar a conexão MQTT, atualizar a quantidade de carros na fila e enviar esses dados para a nevoa presente na região.
+Com relação a aplicação que emulava o cliente basicamente, ela teria acesso aos identificadores e endereços ip de todas as instituições bancárias para que cada operação possível fossem enviado ao servidor do banco, seja: realizar login, registrar uma conta, depositar saldo, transferir saldo, desconectar de uma conta ou alterar o banco de acesso. Com a finalidade de mostrar ao usuário final o efeito dos caminhos de requisição que ele pode seguir ao enviar/realizar uma operação à uma instituição bancária.
+ 
+Com relação a comunicação entre os nós da rede ficou estabelicido da seguinte forma através da concepção do Ricart e Agrawala, cada banco envia requisições HTTP via API REST a um outro banco para requisitar acesso a região crítica, cada banco que recebe tal requisição responderá um "OK" para o solicitante  em três condições: a primeira delas é não possuir uma requisição que deseja acessar a região crítica e não estiver usando a região crítica no momento, a segunda condição é que se o mesmo não estiver na região crítica mas quer acessa-la então o mesmo compara os relógios lógicos do banco requisitor e do banco requerente, e finalmente se o mesmo não estiver na região crítica mas quer acessa-la e tendo os relógios lógicos com o mesmo valor então para desempatar utilizou-se do identificador do banco atributido a cada banco da rede em questão.
 
 # Componentes do projeto
 
-<h2>- Névoa</h2>
-<p2> A névoa processa as requisições advindas dos carros, realiza o tratamento das mesmas, e por fim retorna a resposta da requisição, ainda se considera a sua função de processar os dados advindos dos postos de recarga e comunica-se diretamente com a núvem para envio de dados que devem ser utilizados por outras partes da rede.</p2>
- <h2>- Nuvem</h2>
-<p2> A nuvem faz o papel de processamento das informações advindos das névoas e passa-se essas informações processadas para cada névoa, isto é, para cada nó da rede para o usuário ter acesso a essas informações globais .</p2>
-<h2>- Interface do Carro</h2>
-<p2> O usuário se conecta ao servidor da nevoa e aos serviços através da API Rest. O mesmo, por conseguinte, apresenta as seguintes funcionalidades:</p2>
+<h2>- Banco</h2>
+<p2> Processa os dados advindos do cliente visando controle de concorrencia entre as contas do banco, para por fim realizar as operações possíveis</p2>
+<h2>- Interface do cliente</h2>
+<p2> O usuário se conecta ao servidor ao banco requerinte através da API Rest. O mesmo, por conseguinte, apresenta as seguintes funcionalidades:</p2>
  <ul>
-  <li>1. Visualizar nivel de carga de energia</li>
-  <li>2. Buscar posto com menor fila </li>
-  <li>3. Buscar posto mais proximo </li>
-  <li>4. Buscar melhores postos de outras regiões</li>
-  <li>5. Desconectar</li>
-</ul>
-<h2>- Interface do posto </h2>
-<p2> O posto realiza o envio dos dados ao servidor da nevoa de forma continua</p2>
- <ul>
-  <li>1. Envia a quantidade na fila e os dados necessários para armazenar a quantidade no servidor são eles: quantidade na fila, sua identificação e posição</li>
-  <li>2. Altera o a quantidade de carros na fila</li>
+  <li>1. Logar em um dos bancos banco</li>
+  <li>2. Cadastrar uma conta em um dos bancos</li>
+  <li>3. Depositar saldo na conta logada na instituição escolhida </li>
+  <li>4. Transferir saldo na conta logada para uma das instituições bancárias </li>
+  <li>5. Desconectar da conta</li>
+  <li>6. Alterar o banco de acesso</li>
 </ul>
  
+ #Dica de utilização 
+ <p2> No arquivo armazenado neste github possui um docker-compose para a aplicação cliente e um para a aplicação banco, se for utilizado no portainer é possível diretamente sem quais quer problemas executar o .jar do arquivo das aplicações cliente e servidor que estão armazenadas no docker hub, e finalmente é possível apenas simplesmente executa-las com o jar do container se for o cliente, mas o banco apenas é preciso colocar o docker compose mesmo</p2>
+  <p2> ATENÇÃO: Os bancos setados na aplicação estão destinados a rede do larsid da UEFS então respectivamente para as máquinas 3 , 4 , 5 e 6, caso queira realizar em outras máquinas ou diminuir a quantidade de bancos basta alterar na enumeração dos bancos presente na classe de enumeração "BanksEnum" e criar uma nova imagem docker do projeto, e finalmente executar o container</p2>
+ 
  # Considerações finais 
-<p2> &emsp; O projeto consegue realizar tudo dentro das obrigações mínimas. Na implementação surgiu desafios com relação à compreensão da aplicação do framework Spring boot e no desevolvimento da comunicação MQTT, este projeto pode ainda ser escalavel, com o desenvolvimento da comunicação entre as nevoas sem a utilização de uma nuvem para mediar, assim diminuindo a latencia e deixando as informações fluirem de forma mais eficaz.
+<p2> &emsp; O projeto consegue realizar tudo dentro das obrigações mínimas. Na implementação surgiu desafios com relação à compreensão e implentação do algoritmo de controle de concorrencia de Ricart e Agrawala, e como isso poderia afetar o desenvolvimento do sistema da aplicação, ademais é possível evoluir o projeto no aspecto relacionado a timeout de requisições visto que essa versão do algoritmo de Ricart e Agrawala pode apresentar problemas caso um dos nós da rede falhe, isto é, afetará a rede como um todo.
