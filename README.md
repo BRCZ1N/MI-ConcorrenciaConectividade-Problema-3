@@ -53,7 +53,7 @@ Com relação a comunicação entre os nós da rede ficou estabelicido da seguin
   <li>6. Alterar o banco de acesso</li>
 </ul>
  
-#Dica de utilização 
+# Dica de utilização 
  
  <p2> No arquivo armazenado neste github possui um docker-compose para a aplicação cliente e um para a aplicação banco, se for utilizado no portainer é possível diretamente sem quais quer problemas executar o .jar do arquivo das aplicações cliente e do servidor do   banco que estão armazenadas no docker hub, e finalmente é possível apenas simplesmente inicializar o container e executa com o ".jar" do container docker se for o cliente, mas o banco apenas precisa-se apenas incializar o docker-compose</p2>
   <p2> ATENÇÃO: Os bancos setados na aplicação estão destinados a rede do larsid da UEFS então respectivamente para as máquinas 3 , 4 , 5 e 6, caso queira realizar em outras máquinas ou diminuir a quantidade de bancos basta alterar na enumeração dos bancos      presente na classe de enumeração "BanksEnum" e criar uma nova imagem docker do projeto, e finalmente executar o container</p2>
