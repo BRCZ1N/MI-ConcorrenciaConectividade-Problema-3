@@ -2,13 +2,13 @@
  
 # Índice
 
-- [Desenvolvedores](#Desenvolvedores)
-- [Solução](#Solução)
-- [Componentes](#Componentes)
-   - [Aplicação cliente](#Aplicação cliente)
-   - [Servidor do banco](#Servidor do banco)
-   - [Algoritmo de Concorrencia](#Algoritmo de concorrencia)
-- [Considerações finais](#Considerações)
+- [Desenvolvedores](#desenvolvedores)
+- [Solução](#solução)
+- [Componentes](#componentes)
+   - [Aplicação cliente](#aplicação cliente)
+   - [Servidor do banco](#servidor do banco)
+   - [Algoritmo de Concorrencia](#algoritmo de concorrencia)
+- [Considerações finais](#considerações)
 
 # Desenvolvedores
 <br /><a href="https://github.com/BRCZ1N">Bruno Campos</a>
