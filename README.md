@@ -21,10 +21,12 @@ Esse problema foi desenvolvido com a proposta de criar o prototipo de um banco d
 
 <li>O servidor pode ser definido como uma entidade que provê serviços para serem utilizados por clientes, seja ele um usuário ou um sistema. 
 <li>O cliente pode ser determinado como uma entidade que utiliza dados providos de servidores.
-<li>Relacionamento cliente-servidor, consiste basicamente em uma entidade que requisita serviços, isto é, um cliente e uma entidade que processa e envia respostas ao cliente, isto é, provendo-o, conhecido como servidor.
+<li>O relacionamento P2P, ou Peer-to-Peer (par a par), refere-se a um modelo de comunicação e compartilhamento de recursos em rede. Nesse tipo de relacionamento, os dispositivos ou computadores conectados à rede são considerados iguais e têm a capacidade de agir tanto como cliente quanto como servidor, compartilhando recursos diretamente entre si, sem a necessidade de um servidor centralizado..
 <li>API REST (Representational State Transfer) é um estilo de arquitetura de software para sistemas distribuídos que utiliza o protocolo HTTP para a comunicação entre diferentes sistemas. É um conjunto de padrões e princípios que definem como as requisições e respostas devem ser feitas, permitindo a integração de diferentes aplicações e sistemas. Em uma arquitetura RESTful, cada recurso é representado por uma URL, e as operações que podem ser realizadas nesses recursos são definidas pelos verbos HTTP (GET, POST, PUT, DELETE, entre outros).
 <li>Contêineres são uma forma de virtualização de aplicativos que permite a criação de ambientes isolados e independentes, nos quais é possível executar aplicativos e serviços sem afetar o sistema operacional ou outras aplicações que estejam sendo executadas no mesmo servidor ou máquina.
 <li>Docker é uma plataforma de código aberto que permite a criação, distribuição e execução de aplicativos em contêineres.
+<li>Docker é uma plataforma de código aberto que permite a criação, distribuição e execução de aplicativos em contêineres.
+<li> O algoritmo de Ricart e Agrawala é um método para garantir que apenas um processo tenha acesso a um recurso compartilhado em um sistema distribuído. Os processos enviam mensagens de solicitação e confirmação uns aos outros, permitindo que apenas um processo acesse o recurso por vez. Isso evita conflitos e garante a exclusão mútua.
 
  # Metodologia geral
 
@@ -52,7 +54,7 @@ Com relação a comunicação entre os nós da rede ficou estabelicido da seguin
 </ul>
  
  #Dica de utilização 
- <p2> No arquivo armazenado neste github possui um docker-compose para a aplicação cliente e um para a aplicação banco, se for utilizado no portainer é possível diretamente sem quais quer problemas executar o .jar do arquivo das aplicações cliente e servidor que estão armazenadas no docker hub, e finalmente é possível apenas simplesmente executa-las com o jar do container se for o cliente, mas o banco apenas é preciso colocar o docker compose mesmo</p2>
+ <p2> No arquivo armazenado neste github possui um docker-compose para a aplicação cliente e um para a aplicação banco, se for utilizado no portainer é possível diretamente sem quais quer problemas executar o .jar do arquivo das aplicações cliente e do servidor do banco que estão armazenadas no docker hub, e finalmente é possível apenas simplesmente inicializar o container e executa com o ".jar" do container docker se for o cliente, mas o banco apenas precisa-se apenas incializar o docker-compose</p2>
   <p2> ATENÇÃO: Os bancos setados na aplicação estão destinados a rede do larsid da UEFS então respectivamente para as máquinas 3 , 4 , 5 e 6, caso queira realizar em outras máquinas ou diminuir a quantidade de bancos basta alterar na enumeração dos bancos presente na classe de enumeração "BanksEnum" e criar uma nova imagem docker do projeto, e finalmente executar o container</p2>
  
  # Considerações finais 
