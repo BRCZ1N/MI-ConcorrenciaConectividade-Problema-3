@@ -1,4 +1,4 @@
-<h2 align="center">Sistema de Bancos não centralizados </h2>
+<h2 align="center">Sistema de bancos distribuidos </h2>
  
 # Índice
 
