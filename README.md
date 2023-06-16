@@ -5,7 +5,7 @@
 - [Desenvolvedores](#desenvolvedores)
 - [Solução](#solução)
 - [Componentes](#componentes)
-   - [Aplicação cliente](#Interface do cliente)
+   - [Aplicação cliente](#Cliente)
    - [Servidor do banco](#Banco)
 - [Considerações finais](#considerações)
 
