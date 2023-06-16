@@ -28,7 +28,7 @@ Esse problema foi desenvolvido com a proposta de criar o prototipo de um banco d
 <li>Docker é uma plataforma de código aberto que permite a criação, distribuição e execução de aplicativos em contêineres.
 <li> O algoritmo de Ricart e Agrawala é um método para garantir que apenas um processo tenha acesso a um recurso compartilhado em um sistema distribuído. Os processos enviam mensagens de solicitação e confirmação uns aos outros, permitindo que apenas um processo acesse o recurso por vez. Isso evita conflitos e garante a exclusão mútua.
 
- # Metodologia geral
+# Metodologia geral
 
 Para realização deste projeto a prori pensou-se no emprego de um tipo de arquitetura que poderia se adequar ao projeto, e ficou acordado que a arquitetura utilizada seria P2P, afinal os bancos se comportariam uma hora como clientes e outrora como servidores, além disso para fins de controle de concorrência utilizou-se da ideia do algoritmo de concorrencia em ambientes distribuidos de Ricart e Agrawala.
 
@@ -53,9 +53,10 @@ Com relação a comunicação entre os nós da rede ficou estabelicido da seguin
   <li>6. Alterar o banco de acesso</li>
 </ul>
  
- #Dica de utilização 
- <p2> No arquivo armazenado neste github possui um docker-compose para a aplicação cliente e um para a aplicação banco, se for utilizado no portainer é possível diretamente sem quais quer problemas executar o .jar do arquivo das aplicações cliente e do servidor do banco que estão armazenadas no docker hub, e finalmente é possível apenas simplesmente inicializar o container e executa com o ".jar" do container docker se for o cliente, mas o banco apenas precisa-se apenas incializar o docker-compose</p2>
-  <p2> ATENÇÃO: Os bancos setados na aplicação estão destinados a rede do larsid da UEFS então respectivamente para as máquinas 3 , 4 , 5 e 6, caso queira realizar em outras máquinas ou diminuir a quantidade de bancos basta alterar na enumeração dos bancos presente na classe de enumeração "BanksEnum" e criar uma nova imagem docker do projeto, e finalmente executar o container</p2>
+#Dica de utilização 
+ 
+ <p2> No arquivo armazenado neste github possui um docker-compose para a aplicação cliente e um para a aplicação banco, se for utilizado no portainer é possível diretamente sem quais quer problemas executar o .jar do arquivo das aplicações cliente e do servidor do   banco que estão armazenadas no docker hub, e finalmente é possível apenas simplesmente inicializar o container e executa com o ".jar" do container docker se for o cliente, mas o banco apenas precisa-se apenas incializar o docker-compose</p2>
+  <p2> ATENÇÃO: Os bancos setados na aplicação estão destinados a rede do larsid da UEFS então respectivamente para as máquinas 3 , 4 , 5 e 6, caso queira realizar em outras máquinas ou diminuir a quantidade de bancos basta alterar na enumeração dos bancos      presente na classe de enumeração "BanksEnum" e criar uma nova imagem docker do projeto, e finalmente executar o container</p2>
  
  # Considerações finais 
 <p2> &emsp; O projeto consegue realizar tudo dentro das obrigações mínimas. Na implementação surgiu desafios com relação à compreensão e implentação do algoritmo de controle de concorrencia de Ricart e Agrawala, e como isso poderia afetar o desenvolvimento do sistema da aplicação, ademais é possível evoluir o projeto no aspecto relacionado a timeout de requisições visto que essa versão do algoritmo de Ricart e Agrawala pode apresentar problemas caso um dos nós da rede falhe, isto é, afetará a rede como um todo.
