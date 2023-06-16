@@ -5,9 +5,8 @@
 - [Desenvolvedores](#desenvolvedores)
 - [Solução](#solução)
 - [Componentes](#componentes)
-   - [Aplicação cliente](#aplicação cliente)
-   - [Servidor do banco](#servidor do banco)
-   - [Algoritmo de Concorrencia](#algoritmo de concorrencia)
+   - [Aplicação cliente](#Interface do cliente)
+   - [Servidor do banco](#Banco)
 - [Considerações finais](#considerações)
 
 # Desenvolvedores
